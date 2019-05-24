@@ -16,12 +16,14 @@ class RawVideoCamera(Camera):
     def __init__(self, id=0, config={}):
         Camera.__init__(self, id=id, config=config)
         self.camera = None
+        self.res = config.get('res', None)
 
     def open(self):
         '''
         Opens raw video as a bytes file.
         '''
         self.camera = open(self.id, 'rb')
+        self.log_camera_start()
 
     def read(self):
         '''
@@ -32,10 +34,12 @@ class RawVideoCamera(Camera):
 
         # Length of frame in bytes
         frame_length = np.uint8().itemsize * np.product(self.res)
-        frame = self.camera.read(frame_length)
+        bytes = self.camera.read(frame_length)
 
-        if frame is not None:
-            return np.frombuffer(frame, dtype=np.uint8).reshape(self.res), timestamp_now()
+        buf = np.frombuffer(bytes, dtype=np.uint8)
+        if buf.size != 0:
+            frame = buf.reshape(self.res)
+        return frame, timestamp_now()
 
     def close(self):
         if self.camera:

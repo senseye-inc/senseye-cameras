@@ -8,12 +8,14 @@ log = logging.getLogger(__name__)
 
 
 class CameraViewer(LoopThread):
-    def __init__(self, camera_feed=None):
+    def __init__(self, camera_feed=None, camera_config={}, scale=0.5):
         LoopThread.__init__(self, frequency=100)
 
         self.camera_feed = camera_feed
-
+        self.camera_config = camera_config
+        self.scale = scale
         self.frame = None
+
 
         self.re = RapidEvents(f'camera_viewer:{self.camera_feed}')
         self.re.connect(self.on_frame_read, self.camera_feed)
@@ -25,7 +27,14 @@ class CameraViewer(LoopThread):
         Function triggered upon camera_feed.
         Cannot cv.imshow on this function (gui functions can't be run on a separate thread)
         '''
-        self.frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        # convert frame
+        if self.camera_config.get('pixel_format', None) == 'BayerRG8':
+            frame = cv2.cvtColor(frame, cv2.COLOR_BAYER_GR2RGB)
+        else:
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+
+        # resize frame
+        self.frame = cv2.resize(frame, (int(frame.shape[1] * self.scale), int(frame.shape[0] * self.scale)))
 
 
     def loop(self):

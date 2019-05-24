@@ -58,5 +58,5 @@ class CameraWriter(LoopThread):
         Transfers frames from frame_q to disk.
         '''
         frame = self.frame_q.get_nowait()
-        if self.recorder:
+        if self.recorder and frame is not None:
             self.recorder.write(frame)

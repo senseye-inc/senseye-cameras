@@ -18,7 +18,12 @@ class CameraReader(LoopThread):
     '''
 
     def __init__(self, camera_feed=None, camera_type='usb', camera_config={}, camera_id=0):
-        LoopThread.__init__(self, frequency=100)
+        # lower frequency if we're reading from a video
+        frequency = 200
+        if 'video' in camera_type:
+            frequency = camera_config.get('fps', 30)
+
+        LoopThread.__init__(self, frequency=frequency)
 
         self.camera = create_camera(camera_type=camera_type, config=camera_config, id=camera_id)
         self.camera_type = camera_type

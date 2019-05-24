@@ -16,29 +16,36 @@ class UsbCamera(Camera):
     def __init__(self, id=0, config={}):
         Camera.__init__(self, id=id, config=config)
 
-        self.camera = None
-        self.format = config.get('FORMAT', 'MJPG')
-
+        # set up config
         self.defaults = {
             'fps': 30,
             'codec': 'MJPG',
         }
+        self.config = {**self.defaults, **self.config}
 
-    def configure(self, config={}, defaults={}):
+        self.camera = None
+
+    def configure(self):
         '''
         Configures the camera using a config.
         Supported configurations: fps, codec, res
-        '''
-        c = {**defaults, **config}
-        log.debug(f"Configuring camera {self.id}: {c}")
 
-        if 'fps' in c:
-            self.camera.set(cv2.CAP_PROP_FPS, c['fps'])
-        if 'codec' in c:
-            self.camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*c['codec']))
-        if 'res' in c:
-            self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, c['res'][0])
-            self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, c['res'][1])
+        Fills self.config with camera attributes.
+        Logs camera start.
+        '''
+        if 'fps' in self.config:
+            self.camera.set(cv2.CAP_PROP_FPS, self.config.get('fps'))
+        if 'codec' in self.config:
+            self.camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*self.config.get('codec')))
+        if 'res' in self.config:
+            self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.config.get('res')[0])
+            self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.config.get('res')[1])
+
+        self.config['res'] = (int(self.camera.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(self.camera.get(cv2.CAP_PROP_FRAME_WIDTH)), 3)
+        self.config['fps'] = (int(self.camera.get(cv2.CAP_PROP_FPS)))
+        self.config['codec'] = (int(self.camera.get(cv2.CAP_PROP_FOURCC)))
+
+        self.log_camera_start()
 
     def open(self):
         self.camera = cv2.VideoCapture(self.id)
@@ -46,8 +53,7 @@ class UsbCamera(Camera):
         if not self.camera.isOpened():
             log.warning(f'Video {self.id} failed to open. Video is corrupt, or an unreadable format.')
         else:
-            self.configure(config=self.config, defaults=self.defaults)
-
+            self.configure()
 
     def read(self):
         '''
