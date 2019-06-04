@@ -15,7 +15,7 @@ setup(
         'senseye_cameras.recorders'
     ],
     install_requires=[
-        'senseye_utils>=0.9.0',
+        'senseye_utils >= 0.9.0',
         'numpy',
     ]
 )
