@@ -12,10 +12,13 @@ setup(
     packages=[
         'senseye_cameras',
         'senseye_cameras.cameras',
-        'senseye_cameras.recorders'
+        'senseye_cameras.recorders',
+        'senseye_cameras.audio'
     ],
     install_requires=[
         'senseye_utils >= 0.9.0',
         'numpy',
+        'sounddevice',
+        'soundfile'
     ]
 )
