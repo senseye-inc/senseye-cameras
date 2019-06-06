@@ -25,7 +25,8 @@ class FfmpegBayerRecorder(Recorder):
     '''
 
     def __init__(self, path=None, config={}):
-        Recorder.__init__(self, path=path)
+        # Recorder.__init__(self, path=path)/
+        self.config = config
 
         # configuration
         self.defaults = {

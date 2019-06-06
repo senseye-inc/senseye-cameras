@@ -27,6 +27,9 @@ class CameraWriter(LoopThread):
         self.re = None
         self.camera_feed = camera_feed
 
+    def set_path(self, path=None):
+        self.recorder.set_path(path)
+
     def on_start(self):
         '''
         Initialize RapidEvents object.

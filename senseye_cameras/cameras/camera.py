@@ -33,23 +33,14 @@ class Camera:
         '''
         log.warning("Close not implemented.")
 
-    def log_camera_start(self, config_write=True, config_file='camera_config.txt'):
+    def log_camera_start(self):
         '''
-        Logs relevant information upon record start.
-        Writes config to a file.
+        Logs relevant information upon camera start.
         '''
-        # write config file
-        self.config_file = 'Not written.'
-        if config_write:
-            self.config_file = Path(config_file).absolute()
-            with open(config_file, 'w') as file:
-                json.dump(self.config, file, ensure_ascii=False)
-
         log.info(
             f'\n\n'
-            f'---------- Starting {self.__class__.__name__}:{self.id} ---------\n'
-            f'PID: {os.getpid()}\n'
-            f'CAMERA_CONFIG: {self.config}\n'
-            f'CAMERA_CONFIG_LOC: {self.config_file}\n'
-            f'\n'
+            f'---------- Starting Camera. ----------\n'
+            f'name/type: {self.__class__.__name__}:{self.id}\n'
+            f'config: {self.config}\n'
+            f'--------------------------------------\n'
         )

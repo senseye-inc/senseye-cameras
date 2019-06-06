@@ -1,4 +1,5 @@
 import logging
+import tempfile
 from pathlib import Path
 
 from . recorder import Recorder
@@ -17,7 +18,7 @@ class RawRecorder(Recorder):
     '''
 
     def __init__(self, path=None, **kwargs):
-        Recorder.__init__(self, path=path)
+        Recorder.__init__(self, path=path, suffix='.raw')
 
         # set path variables
         # create parent directories if needed
@@ -42,6 +43,9 @@ class RawRecorder(Recorder):
         if frame is not None and self.recorder:
             try:
                 self.recorder.write(frame)
+
+                if 'res' not in self.config:
+                    self.config['res'] = frame.shape
             except: pass
 
     def close(self):
@@ -53,8 +57,4 @@ class RawRecorder(Recorder):
             self.recorder.close()
             self.recorder = None
 
-            try:
-                Path(self.tmp_path).rename(self.path)
-                log.info(f'Recording complete: {self.path}')
-            except Exception as e:
-                log.error(f'Recording rename failed: {e}')
+            Recorder.close(self)
