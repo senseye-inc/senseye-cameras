@@ -11,6 +11,11 @@ log = logging.getLogger(__name__)
 class RawVideoCamera(Camera):
     '''
     Treats raw video as a camera.
+
+    Args:
+        id (str): path to the raw video file.
+        config (dict): Configuration dictionary. Accepted keywords:
+            res (tuple): frame size
     '''
 
     def __init__(self, id=0, config={}):

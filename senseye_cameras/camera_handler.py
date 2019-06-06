@@ -9,8 +9,20 @@ log = logging.getLogger(__name__)
 
 class CameraHandler(LoopThread):
     '''
-    Links camera_reader and writer.
+    Links camera_reader and camera_writer.
     Writes frames to disk immediately without going through ZMQ.
+
+    Args:
+        camera_feed (str): RapidEvents channel where frames are published.
+        viewer (bool): Whether to display read in frames.
+        
+        camera_type (str): See create_camera.
+        camera_config (dict)
+        camera_id (str OR int)
+
+        recorder_type (str): See create_recorder.
+        recorder_config (str)
+        path (str): file frames are written to.
     '''
     def __init__(self, camera_feed=None, viewer=False,
         camera_type='usb', camera_config={}, camera_id=0,

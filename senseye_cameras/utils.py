@@ -3,17 +3,6 @@ from types import SimpleNamespace
 
 log = logging.getLogger(__name__)
 
-
-def configure(object, config={}, defaults={}):
-    '''
-    Sets an objects attributes given a config + defaults
-    '''
-    merged = {**defaults, **config}
-    for k, v in merged.items():
-        setattr(object, k, v)
-
-    return merged
-
 def ffmpeg_string(**kwargs):
     '''
     Generates an ffmpeg string given kwargs.

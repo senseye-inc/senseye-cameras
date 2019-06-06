@@ -11,7 +11,6 @@ log = logging.getLogger(__name__)
 class Camera:
     '''
     General interface for cameras/other frame sources.
-    Takes an id and a configuration dictionary.
     '''
 
     def __init__(self, id=0, config={}):

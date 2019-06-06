@@ -11,9 +11,12 @@ class RawRecorder(Recorder):
     Records raw video using python file IO.
     Writes to a temp file.
     Renames the temp file once recording is done.
+
+    Args:
+        path (str): Output path of video.
     '''
 
-    def __init__(self, path=None, config={}):
+    def __init__(self, path=None, **kwargs):
         Recorder.__init__(self, path=path)
 
         # set path variables

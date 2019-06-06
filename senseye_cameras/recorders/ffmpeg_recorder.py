@@ -1,8 +1,7 @@
 import logging
-from pathlib import Path
-from subprocess import PIPE, Popen, DEVNULL
+from subprocess import PIPE, Popen
 
-from .. utils import configure, ffmpeg_string
+from .. utils import ffmpeg_string
 from . recorder import Recorder
 
 log = logging.getLogger(__name__)
@@ -13,8 +12,16 @@ class FfmpegRecorder(Recorder):
     Records raw video using python file IO.
     Writes to a temp file.
     Renames the temp file once recording is done.
-    '''
 
+    Args:
+        path (str): Output path of video.
+        config (dict): Configuration dictionary. Accepted keywords:
+            fps (int)
+            pixel_format (str)
+            codec (str)
+            format (str)
+            res (tuple)
+    '''
     def __init__(self, path=None, config={}):
         Recorder.__init__(self, path=path)
 

@@ -12,6 +12,19 @@ log = logging.getLogger(__name__)
 
 
 class PylonCamera(Camera):
+    '''
+    Camera that interfaces with pylon/basler cameras.
+
+    Args:
+        id (int): Id of the pylon camera.
+        config (dict): Configuration dictionary. Accepted keywords:
+            fps (int)
+            color (bool)
+            pixel_format (str)
+            exposure_time (int)
+            res (tuple)
+            pfs (str): path to a pfs file. Overrides all other configs.
+    '''
     def __init__(self, id=0, config={}):
         Camera.__init__(self, id=id, config=config)
 

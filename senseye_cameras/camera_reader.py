@@ -13,7 +13,10 @@ class CameraReader(LoopThread):
     Creates a camera instance given camera_type, camera_config, and camera_id.
 
     Args:
-        camera_feed (string): name of the RapidEvents event published every time a frame is read.
+        camera_feed (string): Name of the RapidEvents event published every time a frame is read.
+        camera_type (str): See 'create_camera' documentation.
+        camera_config (dict): Configures the camera.
+        camera_id (str OR int)
     '''
 
     def __init__(self, camera_feed=None, camera_type='usb', camera_config={}, camera_id=0):

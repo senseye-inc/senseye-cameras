@@ -11,11 +11,13 @@ class CameraWriter(LoopThread):
     '''
     Listens for and writes frames to disk.
     Args:
-        path: directory/file frames are written to.
-        camera_feed: RapidEvent channel that this object listens to for frames
+        camera_feed (str): RapidEvent channel that this object listens to for frames
+        recorder_type (str): see 'create_recorder' documentation.
+        recorder_config (dict): configures the recorder.
+        path (str): file frames are written to.
     '''
 
-    def __init__(self, path=None, camera_feed=None, recorder_type='raw', recorder_config={}):
+    def __init__(self, camera_feed=None, recorder_type='raw', recorder_config={}, path=None):
         LoopThread.__init__(self, frequency=150)
 
         self.recorder = create_recorder(recorder_type=recorder_type, path=path, config=recorder_config)
