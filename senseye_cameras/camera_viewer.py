@@ -8,6 +8,14 @@ log = logging.getLogger(__name__)
 
 
 class CameraViewer(LoopThread):
+    '''
+    Args:
+        camera_feed (str): RapidEvent channel that this object listens to for frames
+        camera_config (dict): Configuration dictionary. Accepted keywords:
+            pixel_format (str)
+        scale (int): How much to decimate displayed frames. Values greater than 1 will enlarge frames.
+
+    '''
     def __init__(self, camera_feed=None, camera_config={}, scale=0.5):
         LoopThread.__init__(self, frequency=100)
 

@@ -1,0 +1,20 @@
+# Bitbucket pipeline script
+# Current features:
+# Runs all nose tests in test directory
+image: python:3.6.5
+
+pipelines:
+  default:
+    - step:
+        services:
+          - redis
+        script:
+          - pip install nose
+          - pip install . --extra-index-url='http://pypi.senseye.co' --trusted-host='pypi.senseye.co'
+          - nosetests
+
+definitions:
+  services:
+    redis:
+      image: redis
+      memory: 128

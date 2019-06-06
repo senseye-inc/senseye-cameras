@@ -11,6 +11,13 @@ log = logging.getLogger(__name__)
 class UsbCamera(Camera):
     '''
     Opens a usb camera or video using OpenCV.
+
+    Args:
+        id (int OR str): id of the camera, or path to a video file.
+        config (dict): Configuration dictionary. Accepted keywords:
+            res (tuple): frame size
+            codec (str)
+            fps (int)
     '''
 
     def __init__(self, id=0, config={}):

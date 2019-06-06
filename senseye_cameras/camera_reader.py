@@ -1,7 +1,6 @@
 import logging
 
-from senseye_utils import LoopThread
-from senseye_utils.rapid_events import RapidEvents
+from senseye_utils import LoopThread, RapidEvents
 
 from . cameras.camera_factory import create_camera
 
@@ -14,16 +13,19 @@ class CameraReader(LoopThread):
     Creates a camera instance given camera_type, camera_config, and camera_id.
 
     Args:
-        camera_feed (string): name of the RapidEvents event published every time a frame is read.
+        camera_feed (string): Name of the RapidEvents event published every time a frame is read.
+        camera_type (str): See 'create_camera' documentation.
+        camera_config (dict): Configures the camera.
+        camera_id (str OR int)
     '''
 
     def __init__(self, camera_feed=None, camera_type='usb', camera_config={}, camera_id=0):
         # lower frequency if we're reading from a video
-        frequency = 200
+        self.frequency = 200
         if 'video' in camera_type:
-            frequency = camera_config.get('fps', 30)
+            self.frequency = camera_config.get('fps', 30)
 
-        LoopThread.__init__(self, frequency=frequency)
+        LoopThread.__init__(self, frequency=self.frequency)
 
         self.camera = create_camera(camera_type=camera_type, config=camera_config, id=camera_id)
         self.camera_type = camera_type
