@@ -6,6 +6,7 @@ from senseye_utils import RapidEvents
 
 USB_VIDEO = './tests/resources/usb_video.mp4'
 
+
 def test_camera_reader():
     camera_feed = 'CR_TEST'
 

@@ -4,6 +4,7 @@ from senseye_cameras import UsbCamera
 
 USB_VIDEO = './tests/resources/usb_video.mp4'
 
+
 def test_usb_camera_open_close():
     cam = UsbCamera(id=USB_VIDEO)
     cam.open()
@@ -12,6 +13,7 @@ def test_usb_camera_open_close():
 
     cam.close()
     nt.assert_is_none(cam.camera)
+
 
 def test_usb_camera_read():
     cam = UsbCamera(id=USB_VIDEO)

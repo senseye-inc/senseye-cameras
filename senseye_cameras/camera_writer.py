@@ -1,7 +1,6 @@
 import logging
 
-from senseye_utils import LoopThread, SafeQueue
-from senseye_utils.rapid_events import RapidEvents
+from senseye_utils import LoopThread, SafeQueue, RapidEvents
 
 from . recorders.recorder_factory import create_recorder
 

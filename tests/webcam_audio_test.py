@@ -86,4 +86,3 @@ class AudioTests(unittest.TestCase):
         block, time = webcam_audio.read()
 
         nt.assert_equal(None, block)
-

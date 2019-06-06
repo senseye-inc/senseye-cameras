@@ -1,41 +1,46 @@
-from senseye_utils import ProcessManager
+import logging
 
+from senseye_utils import LoopThread
 from . camera_reader import CameraReader
 from . camera_writer import CameraWriter
-from . camera_viewer import CameraViewer
+
+log = logging.getLogger(__name__)
 
 
-class CameraHandler:
+class CameraHandler(LoopThread):
     '''
-    Creates a CameraWriter and CameraReader process
-    Links them with the 'camera_feed' variable
+    Links camera_reader and writer.
+    Writes frames to disk immediately without going through ZMQ.
     '''
-
     def __init__(self, camera_feed=None, viewer=False,
         camera_type='usb', camera_config={}, camera_id=0,
         recorder_type='raw', recorder_config={}, path=None,
-        process_manager=None
     ):
+        self.reader = CameraReader(
+            camera_feed=camera_feed,
+            camera_type=camera_type,
+            camera_config=camera_config,
+            camera_id=camera_id,
+        )
 
-        self.camera_feed = camera_feed
-        if self.camera_feed is None:
-            self.camera_feed = f'camera_reader:publish:{camera_type}:{camera_id}'
+        self.writer = CameraWriter(
+            camera_feed=camera_feed,
+            recorder_type=recorder_type,
+            recorder_config=recorder_config,
+            path=path,
+        )
 
-        self.pm = process_manager
-        if self.pm is None:
-            self.pm = ProcessManager()
+        LoopThread.__init__(self, frequency=self.reader.frequency)
 
-        # only creates a CameraWriter if a path is given.
-        if path:
-            self.pm.add_process(CameraWriter, camera_feed=self.camera_feed, recorder_type=recorder_type, recorder_config=recorder_config, path=path)
+    def loop(self):
+        frame, timestamp = self.reader.camera.read()
+        if frame is not None:
+            self.writer.recorder.write(frame)
+            self.reader.re.publish(self.reader.camera_feed, frame=frame, timestamp=timestamp)
 
-        if viewer:
-            self.pm.add_process(CameraViewer, camera_feed=self.camera_feed)
+    def on_start(self):
+        self.reader.on_start()
 
-        self.pm.add_process(CameraReader, camera_feed=self.camera_feed, camera_type=camera_type, camera_config=camera_config, camera_id=camera_id)
-
-    def start(self):
-        self.pm.start()
-
-    def stop(self):
-        self.pm.stop()
+    def on_stop(self):
+        self.reader.on_stop()
+        self.writer.on_stop()

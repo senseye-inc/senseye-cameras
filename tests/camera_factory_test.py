@@ -4,6 +4,7 @@ from senseye_cameras import create_camera
 
 USB_VIDEO = './tests/resources/usb_video.mp4'
 
+
 def test_create_usb_camera():
     cam = create_camera(camera_type='usb', id=USB_VIDEO)
     cam.open()
