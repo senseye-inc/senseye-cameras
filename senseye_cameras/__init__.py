@@ -1,3 +1,20 @@
+'''
+Senseye Camera Utility Package.
+
+abstractions:
+    camera - a video/camera interface that produces frames.
+    recorder - an interface that takes in frames and writes them to disk.
+create a camera/recorder through the create_camera/create_recorder functions.
+
+higher level modules:
+    CameraReader: continuously reads frames. Publishes frames via ZMQ RapidEvents.
+    CameraWriter: continuously writes frames. Gets frames from ZMQ RapidEvents.
+    CameraViewer: continuously displays frames using opencv imshow. Gets frames from ZMQ RapidEvents.
+
+    CameraHandler: continuously reads and writes frames.
+
+    AudioRecorder: continuously listens to and writes audio to disk.
+'''
 from . cameras.camera_factory import create_camera
 from . recorders.recorder_factory import create_recorder
 
