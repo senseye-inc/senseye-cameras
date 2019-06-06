@@ -4,17 +4,14 @@ Script that contains code to record audio from a webcam
 
 Author: Jacob Schofield (jacob.schofield@senseye.co) - May 2019
 """
-# Standard imports
-import os
-import json
 import logging
-from pathlib import Path
-import sounddevice as sd
-import sys
-import queue
-# Custom scripts
-from senseye_utils.date_utils import timestamp_now
+try:
+    import sounddevice as sd
+except:
+    sd = None
+
 from . audio import Audio
+from senseye_utils.date_utils import timestamp_now
 
 log = logging.getLogger(__name__)
 
@@ -37,7 +34,6 @@ class WebcamAudio(Audio):
                         'downsample': 10,
                         'subtype': 'PCM_24'
                         }
-        ### TODO: This does not appear to overwrite the default config, should fix this
         self.config = {**self.defaults, **self.config}
         self.audio = None
 
@@ -67,9 +63,11 @@ class WebcamAudio(Audio):
         try:
             log.info('started audio recording')
             log.info(f"device {self.config['device']} | channels {self.config['channels']} | samplerate {self.config['samplerate']}")
-            self.audio = sd.InputStream(device=self.config['device'],
-                                        channels=self.config['channels'],
-                                        samplerate=self.config['samplerate'])
+            self.audio = sd.InputStream(
+                device=self.config['device'],
+                channels=self.config['channels'],
+                samplerate=self.config['samplerate']
+            )
             self.audio.start()
         except Exception as exc:
             log.warning(f'Failed to load audio stream: {exc}')
@@ -97,3 +95,10 @@ class WebcamAudio(Audio):
         if self.audio:
             self.audio.close()
             self.audio = None
+
+# Fallback for no PortAudio
+if sd is None:
+    class WebcamAudio(Audio):
+        def __init__(self, *args, **kargs):
+            Audio.__init__(self)
+            log.error("PortAudio not found")

@@ -12,7 +12,7 @@ def test_camera_handler():
     ch = CameraHandler(
         camera_type='video',
         camera_id=USB_VIDEO,
-        recorder_type='ffmpeg',
+        recorder_type='raw',
         path=TMP_VIDEO
     )
     ch.start()

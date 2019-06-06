@@ -4,12 +4,11 @@ Script that contains the abstract class for recording audio
 
 Author: Jacob Schofield (jacob.schofield@senseye.co) - May 2019
 """
-# Standard imports
 import os
 import json
 import logging
 from pathlib import Path
-# Custom scripts
+
 from senseye_utils.date_utils import timestamp_now
 
 log = logging.getLogger(__name__)

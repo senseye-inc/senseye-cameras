@@ -16,9 +16,10 @@ setup(
         'senseye_cameras.audio'
     ],
     install_requires=[
-        'senseye_utils >= 0.9.0',
+        'senseye_utils >= 0.9.2',
+        'opencv-python',
         'numpy',
         'sounddevice',
         'soundfile'
-    ]
+    ],
 )

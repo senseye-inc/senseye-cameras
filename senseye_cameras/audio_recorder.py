@@ -6,9 +6,11 @@ Author: Jacob Schofield (jacob.schofield@senseye.co) - May 2019
 """
 # Standard imports
 import logging
-import soundfile as sf
 import numpy as np
-import os
+try:
+    import soundfile as sf
+except:
+    sf = None
 # Custom imports
 from senseye_utils import LoopThread
 from . audio.webcam_audio import WebcamAudio
@@ -80,3 +82,12 @@ class AudioRecorder(LoopThread):
             self.audio = None
 
         log.info(f'audio {self.audio_type}:{self.audio_id} closing.')
+
+if sf is None:
+    class AudioRecorder(LoopThread):
+        def __init__(self, *args, **kwargs):
+            LoopThread.__init__(self, frequency=1)
+            log.error("sndfile library not found.")
+
+        def loop(self):
+            pass
