@@ -18,7 +18,8 @@ class CameraWriter(LoopThread):
     '''
 
     def __init__(self, camera_feed=None, recorder_type='raw', recorder_config={}, path=None):
-        LoopThread.__init__(self, frequency=150)
+        self.frequency = recorder_config.get('fps', -1)
+        LoopThread.__init__(self, frequency=self.frequency)
 
         self.recorder = create_recorder(recorder_type=recorder_type, path=path, config=recorder_config)
         self.frame_q = SafeQueue(100)

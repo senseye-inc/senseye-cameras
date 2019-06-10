@@ -15,7 +15,7 @@ class CameraHandler(LoopThread):
     Args:
         camera_feed (str): RapidEvents channel where frames are published.
         viewer (bool): Whether to display read in frames.
-        
+
         camera_type (str): See create_camera.
         camera_config (dict)
         camera_id (str OR int)
@@ -43,6 +43,9 @@ class CameraHandler(LoopThread):
         )
 
         LoopThread.__init__(self, frequency=self.reader.frequency)
+
+    def set_path(self, path=None):
+        self.writer.set_path(path=path)
 
     def loop(self):
         frame, timestamp = self.reader.camera.read()
