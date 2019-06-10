@@ -49,6 +49,12 @@ class CameraWriter(LoopThread):
         '''
         Cleans up our recorder and RapidEvents instances.
         '''
+
+        # push remaning frames to disk
+        remaining_frames = self.frame_q.remove_existing()
+        for frame in remaining_frames:
+            self.recorder.write(frame)
+
         if self.recorder:
             self.recorder.close()
             self.recorder = None

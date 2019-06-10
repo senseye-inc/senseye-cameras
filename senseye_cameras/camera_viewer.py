@@ -35,11 +35,14 @@ class CameraViewer(LoopThread):
         Function triggered upon camera_feed.
         Cannot cv.imshow on this function (gui functions can't be run on a separate thread)
         '''
+        pix_fmt = self.camera_config.get('pixel_format', None)
         # convert frame
-        if self.camera_config.get('pixel_format', None) == 'BayerRG8':
+        if pix_fmt == 'BayerRG8':
             frame = cv2.cvtColor(frame, cv2.COLOR_BAYER_GR2RGB)
-        else:
+        elif pix_fmt == 'RGB':
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        elif pix_fmt == 'gray':
+            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
 
         # resize frame
         self.frame = cv2.resize(frame, (int(frame.shape[1] * self.scale), int(frame.shape[0] * self.scale)))
