@@ -31,7 +31,6 @@ class WebcamAudio(Audio):
                         'channels': 1,
                         'device': id,
                         'blocksize': 1024,
-                        'downsample': 10,
                         'subtype': 'PCM_24'
                         }
         self.config = {**self.defaults, **self.config}
@@ -40,7 +39,7 @@ class WebcamAudio(Audio):
     def configure(self):
         """
         Configures the audio using a config.
-        Supported configurations: samplerate, codec, channels, blocksize, downsample, subtype
+        Supported configurations: samplerate, codec, channels, blocksize, subtype
 
         Fills self.config with audio attributes.
         Logs audio start.
@@ -87,9 +86,7 @@ class WebcamAudio(Audio):
             log.warning('Audio block overflow')
             return None, timestamp_now()
 
-        # Downsample
-        downsamp_block = block[::self.config['downsample']]
-        return downsamp_block, timestamp_now()
+        return block, timestamp_now()
 
     def close(self):
         if self.audio:
