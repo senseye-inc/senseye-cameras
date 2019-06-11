@@ -87,6 +87,7 @@ class CameraHandler(LoopThread):
     def loop(self):
         if self.reader:
             frame, timestamp = self.reader.camera.read()
-            if self.writer and frame is not None:
-                self.writer.recorder.write(frame)
+            if frame is not None:
                 self.reader.re.publish(self.reader.camera_feed, frame=frame, timestamp=timestamp)
+                if self.writer is not None:
+                    self.writer.recorder.write(frame)
