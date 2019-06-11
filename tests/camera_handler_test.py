@@ -16,8 +16,12 @@ def test_camera_handler():
         path=TMP_VIDEO
     )
     ch.start()
+    ch.start_reader()
+    ch.start_writer()
     time.sleep(5)
     ch.stop()
 
     nt.assert_greater(os.stat(TMP_VIDEO).st_size, 0)
     os.remove(TMP_VIDEO)
+
+test_camera_handler()
