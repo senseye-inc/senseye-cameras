@@ -67,7 +67,7 @@ class CameraHandler(LoopThread):
 
     def on_stop(self):
         self.stop_reading()
-        self.start_writing()
+        self.stop_writing()
 
     def loop(self):
         if self.reading:

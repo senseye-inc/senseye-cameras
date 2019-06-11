@@ -16,8 +16,8 @@ def test_camera_handler():
         path=TMP_VIDEO
     )
     ch.start()
-    ch.start_reader()
-    ch.start_writer()
+    ch.start_reading()
+    ch.start_writing()
     time.sleep(5)
     ch.stop()
 
