@@ -29,6 +29,8 @@ class CameraHandler(LoopThread):
         recorder_type='raw', recorder_config={}, path=None,
     ):
         self.camera_feed = camera_feed
+        if self.camera_feed is None:
+            self.camera_feed = f'camera_handler:publish:{camera_type}:{camera_id}'
 
         self.camera = create_camera(camera_type=camera_type, config=camera_config, id=camera_id)
         self.recorder = create_recorder(recorder_type=recorder_type, path=path, config=recorder_config)
@@ -56,14 +58,12 @@ class CameraHandler(LoopThread):
     def stop_reading(self):
         log.info(f'Camera closing.')
         self.reading = False
-        if self.camera:
-            self.camera.close()
+        self.camera.close()
 
     def stop_writing(self):
         log.info('Recorder closing.')
         self.writing = False
-        if self.recorder:
-            self.recorder.close()
+        self.recorder.close()
 
     def on_stop(self):
         self.stop_reading()
