@@ -28,7 +28,7 @@ class RawVideoCamera(Camera):
         Opens raw video as a bytes file.
         '''
         self.camera = open(self.id, 'rb')
-        self.log_camera_start()
+        self.log_start()
 
     def read(self):
         '''

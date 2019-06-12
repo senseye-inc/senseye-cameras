@@ -41,6 +41,9 @@ class AudioRecorder(LoopThread):
         self.path = audio_path
         self.audio_data = np.empty([0, self.audio.config['channels']])
 
+    def set_path(self, path=None):
+        self.path = path
+
     def write(self):
         """
         Write output data to a file

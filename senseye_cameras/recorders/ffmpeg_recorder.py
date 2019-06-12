@@ -48,7 +48,7 @@ class FfmpegRecorder(Recorder):
                 self.config['res'] = frame.shape
             self.process = Popen(cmd.split(), stdin=PIPE)
             self.recorder = self.process.stdin
-            self.log_record_start()
+            self.log_start()
         except Exception as e:
             log.error(f'Failed to initialize recorder: {self.path} with exception: {e}.')
 

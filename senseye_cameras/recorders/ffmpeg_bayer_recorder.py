@@ -50,7 +50,7 @@ class FfmpegBayerRecorder(Recorder):
             cmd = ffmpeg_string(path=file_path, **self.config)
             process = Popen(cmd.split(), stdin=PIPE)
             setattr(self, c, process)
-        self.log_record_start()
+        self.log_start()
 
     def bayer_frame(self, frame=None, channel=None):
         '''
@@ -80,3 +80,4 @@ class FfmpegBayerRecorder(Recorder):
     def close(self):
         for c in self.bayer_channels:
             getattr(self, c).kill()
+        self.log_stop()

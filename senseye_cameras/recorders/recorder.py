@@ -33,7 +33,7 @@ class Recorder:
         if self.path.exists():
             log.warning(f'{self.path} exists, overriding')
         Path(self.path).parent.mkdir(parents=True, exist_ok=True)
-        log.debug(f'{self.__class__.__name__} path set to {self.path}')
+        log.info(f'{self.__class__.__name__} path set to {self.path}')
 
     def set_tmp_path(self, path, suffix=None):
         '''
@@ -55,7 +55,6 @@ class Recorder:
         self.config_file = Path(self.path.parent, config_file).absolute()
         with open(self.config_file, 'w') as file:
             json.dump(self.config, file, ensure_ascii=False)
-        log.info(f'Writing config to {self.config_file}')
 
     def close(self):
         '''
@@ -64,23 +63,31 @@ class Recorder:
         '''
         try:
             Path(self.tmp_path).rename(self.path)
-            log.info(f'Recording complete: {self.path}')
         except Exception as e:
             log.error(f'Recording rename failed: {e}')
 
         # write config file
         self.write_config()
 
-    def log_record_start(self, ):
+        self.log_stop()
+
+    def log_start(self, ):
         '''
         Logs relevant information upon record start.
         '''
         log.info(
-            f'\n\n'
-            f'---------- Starting Recorder. ----------\n'
-            f'name/type: {self.__class__.__name__}\n'
-            f'path: {self.path}\n'
+            f'\n'
+            f'---------- Starting {self.__class__.__name__}. ----------\n'
             f'tmp_path: {self.tmp_path}\n'
+            f'----------------------------------------'
+        )
+
+    def log_stop(self):
+        log.info(
+            f'\n'
+            f'---------- Stopping {self.__class__.__name__}. ----------\n'
+            f'path: {self.path}\n'
             f'config: {self.config}\n'
-            f'----------------------------------------\n'
+            f'config_file: {self.config_file}\n'
+            f'----------------------------------------'
         )

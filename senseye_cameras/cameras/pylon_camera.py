@@ -87,7 +87,6 @@ class PylonCamera(Camera):
         self.config['exposure_time'] = self.camera.ExposureTime.Value
         self.config['res'] = (self.camera.Width.Value, self.camera.Height.Value)
         self.config['fps'] = self.camera.ResultingFrameRate.GetValue()
-        self.log_camera_start()
 
     def open(self):
         # quick tips & tricks:
@@ -103,6 +102,7 @@ class PylonCamera(Camera):
             self.camera.StartGrabbing(pylon.GrabStrategy_OneByOne)
         except Exception as e:
             log.error(f"Pylon camera open failed: {e}")
+        self.log_start()
 
     def read(self):
         frame = None

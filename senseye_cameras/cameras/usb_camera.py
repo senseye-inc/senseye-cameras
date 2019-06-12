@@ -52,7 +52,6 @@ class UsbCamera(Camera):
         self.config['fps'] = (int(self.camera.get(cv2.CAP_PROP_FPS)))
         self.config['codec'] = (int(self.camera.get(cv2.CAP_PROP_FOURCC)))
 
-        self.log_camera_start()
 
     def open(self):
         self.camera = cv2.VideoCapture(self.id)
@@ -61,6 +60,7 @@ class UsbCamera(Camera):
             log.warning(f'Video {self.id} failed to open. Video is corrupt, or an unreadable format.')
         else:
             self.configure()
+        self.log_start()
 
     def read(self):
         '''

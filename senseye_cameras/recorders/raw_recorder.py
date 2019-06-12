@@ -35,7 +35,7 @@ class RawRecorder(Recorder):
         # create recorder
         try:
             self.recorder = open(self.tmp_path, 'bw')
-            self.log_record_start()
+            self.log_start()
         except Exception as e:
             log.error(f'Failed to initialize recorder: {self.tmp_path} with exception: {e}.')
 

@@ -33,14 +33,13 @@ class Camera:
         '''
         log.warning("Close not implemented.")
 
-    def log_camera_start(self):
+    def log_start(self):
         '''
         Logs relevant information upon camera start.
         '''
         log.info(
-            f'\n\n'
-            f'---------- Starting Camera. ----------\n'
-            f'name/type: {self.__class__.__name__}:{self.id}\n'
+            f'\n'
+            f'---------- Starting {self.__class__.__name__}:{self.id}. ----------\n'
             f'config: {self.config}\n'
-            f'--------------------------------------\n'
+            f'--------------------------------------'
         )
