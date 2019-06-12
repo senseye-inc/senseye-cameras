@@ -50,7 +50,7 @@ class WebcamAudio(Audio):
         if 'channels' not in self.config:
             self.config['channels'] = device_info['max_input_channels']
 
-        self.log_audio_start()
+        self.log_start()
 
     def open(self):
         """
@@ -60,8 +60,6 @@ class WebcamAudio(Audio):
         self.configure()
         # Open camera
         try:
-            log.info('started audio recording')
-            log.info(f"device {self.config['device']} | channels {self.config['channels']} | samplerate {self.config['samplerate']}")
             self.audio = sd.InputStream(
                 device=self.config['device'],
                 channels=self.config['channels'],
@@ -70,7 +68,6 @@ class WebcamAudio(Audio):
             self.audio.start()
         except Exception as exc:
             log.warning(f'Failed to load audio stream: {exc}')
-        log.info(f'Audio status: {self.audio}')
         return self.audio
 
     def read(self):
