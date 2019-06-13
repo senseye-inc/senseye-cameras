@@ -43,9 +43,9 @@ class FfmpegRecorder(Recorder):
         Thus, we must have a frame to initialize our recorder.
         '''
         try:
-            cmd = ffmpeg_string(path=self.tmp_path, res=(frame.shape[1], frame.shape[0]), **self.config)
             if 'res' not in self.config:
-                self.config['res'] = frame.shape
+                self.config['res'] = (frame.shape[1], frame.shape[0])
+            cmd = ffmpeg_string(path=self.tmp_path, **self.config)
             self.process = Popen(cmd.split(), stdin=PIPE)
             self.recorder = self.process.stdin
             self.log_start()
