@@ -18,21 +18,8 @@ class RawRecorder(Recorder):
     '''
 
     def __init__(self, path=None, **kwargs):
-        Recorder.__init__(self, path=path, suffix='.raw')
+        Recorder.__init__(self, path=path)
 
-        # set path variables
-        # create parent directories if needed
-        self.path = Path(path).absolute()
-        self.tmp_path = Path(f'{self.path}.tmp')
-
-        # warn users if we're about to override some files
-        if self.path.exists():
-            log.warning(f'{self.path} exists, overriding')
-        if self.tmp_path.exists():
-            log.warning(f'{self.tmp_path} exists, overriding')
-        Path(self.path).parent.mkdir(parents=True, exist_ok=True)
-
-        # create recorder
         try:
             self.recorder = open(self.tmp_path, 'bw')
             self.log_start()

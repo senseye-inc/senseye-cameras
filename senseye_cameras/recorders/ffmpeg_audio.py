@@ -1,4 +1,5 @@
 import os
+import platform
 import logging
 import signal
 from subprocess import Popen, PIPE, STDOUT
@@ -18,8 +19,9 @@ class FfmpegAudio(Recorder):
     '''
 
     def __init__(self, path=None, config={}):
-        Recorder.__init__(self, path=path, suffix='.mp3')
-
+        Recorder.__init__(self, path=path)
+        self.process = None
+        self.cmd = None
         self.generate_cmd()
 
     def generate_cmd(self):
@@ -33,7 +35,7 @@ class FfmpegAudio(Recorder):
     def get_first_dshow_audio_device(self):
         # get ffmpeg list device output
         cmd = 'ffmpeg -hide_banner -f dshow -list_devices true -i -'
-        process = Popen(cmd.split(), universal_newlines=True, stdout=PIPE, stderr=STDOUT)
+        process = Popen(cmd.split(), universal_newlines=True, stdout=PIPE, stderr=STDOUT, stdin=PIPE)
         output = process.communicate()[0]
 
         try:
@@ -55,9 +57,16 @@ class FfmpegAudio(Recorder):
         '''
         Closes file handle.
         Renames tmp file.
+
+        When running an ffmpeg command that writes directly to a file,
+        the subprocess closes on a SIGINT.
         '''
         if self.process:
-            os.kill(self.process.pid, signal.SIGINT)
+            if self.process.poll() == None:
+                if platform.system() == 'Windows':
+                    os.kill(signal.CTRL_C_EVENT, 0)
+                if platform.system() == 'Darwin' or platform.system() == 'Linux':
+                    self.process.send_signal(signal.SIGINT)
             self.process = None
             self.recorder = None
 

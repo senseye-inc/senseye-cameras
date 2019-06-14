@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from subprocess import PIPE, Popen
 
 from .. utils import ffmpeg_string
@@ -23,19 +24,31 @@ class FfmpegRecorder(Recorder):
             res (tuple)
     '''
     def __init__(self, path=None, config={}):
-        Recorder.__init__(self, path=path, suffix='.avi')
+        Recorder.__init__(self, path=path)
+
+        self.codec_lookup = {
+            '.avi': 'huffyuv',
+            '.mp4': 'libx264 -crf 0 -preset ultrafast',
+        }
 
         # configuration
         self.defaults = {
             'fps': 30,
             'pixel_format': 'rgb24',
-            'codec': 'huffyuv',
             'format': 'rawvideo',
         }
+        self.generate_codec()
         self.config = {**self.defaults, **config}
 
         self.process = None
         self.recorder = None
+
+    def generate_codec(self):
+        '''
+        Determines a good codec to use based on path.suffix.
+        '''
+        suffix = Path(self.path).suffix
+        self.config['codec'] = self.codec_lookup.get(suffix, 'huffyuv')
 
     def initialize_recorder(self, frame=None):
         '''
@@ -67,10 +80,11 @@ class FfmpegRecorder(Recorder):
         '''
         Closes ffmpeg process.
         Renames tmp file.
+        When ffmpeg writes to a PIPE, communicate closes it cleanly.
         '''
         if self.process:
-            self.process.kill()
-            self.process.communicate()
+            if self.process.poll() == None:
+                self.process.communicate()
             self.process = None
             self.recorder = None
 
