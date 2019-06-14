@@ -1,14 +1,14 @@
 import logging
 from pathlib import Path
-from subprocess import PIPE, Popen
+from subprocess import Popen, PIPE
 
+from . output import Output
 from .. utils import ffmpeg_string
-from . recorder import Recorder
 
 log = logging.getLogger(__name__)
 
 
-class FfmpegRecorder(Recorder):
+class VideoFfmpeg(Output):
     '''
     Records raw video using python file IO.
     Writes to a temp file.
@@ -24,31 +24,29 @@ class FfmpegRecorder(Recorder):
             res (tuple)
     '''
     def __init__(self, path=None, config={}):
-        Recorder.__init__(self, path=path)
-
-        self.codec_lookup = {
-            '.avi': 'huffyuv',
-            '.mp4': 'libx264 -crf 0 -preset ultrafast',
-        }
-
-        # configuration
-        self.defaults = {
+        defaults = {
             'fps': 30,
             'pixel_format': 'rgb24',
             'format': 'rawvideo',
         }
+        Output.__init__(self, path=path, config=config, defaults=defaults)
+
+        # update codec based on suffix
         self.generate_codec()
-        self.config = {**self.defaults, **config}
 
         self.process = None
-        self.recorder = None
 
     def generate_codec(self):
         '''
         Determines a good codec to use based on path.suffix.
         '''
+        codec_lookup = {
+            '.avi': 'huffyuv',
+            '.mp4': 'libx264 -crf 0 -preset ultrafast',
+        }
+
         suffix = Path(self.path).suffix
-        self.config['codec'] = self.codec_lookup.get(suffix, 'huffyuv')
+        self.config['codec'] = codec_lookup.get(suffix, 'huffyuv')
 
     def initialize_recorder(self, frame=None):
         '''
@@ -60,7 +58,7 @@ class FfmpegRecorder(Recorder):
                 self.config['res'] = (frame.shape[1], frame.shape[0])
             cmd = ffmpeg_string(path=self.tmp_path, **self.config)
             self.process = Popen(cmd.split(), stdin=PIPE)
-            self.recorder = self.process.stdin
+            self.output = self.process.stdin
             self.log_start()
         except Exception as e:
             log.error(f'Failed to initialize recorder: {self.path} with exception: {e}.')
@@ -69,11 +67,11 @@ class FfmpegRecorder(Recorder):
         if frame is None:
             return
 
-        if self.recorder is None:
+        if self.output is None:
             self.initialize_recorder(frame=frame)
 
         try:
-            self.recorder.write(frame)
+            self.output.write(frame)
         except: pass
 
     def close(self):
@@ -85,7 +83,7 @@ class FfmpegRecorder(Recorder):
         if self.process:
             if self.process.poll() == None:
                 self.process.communicate()
-            self.process = None
-            self.recorder = None
+            Output.close(self)
 
-            Recorder.close(self)
+        self.process = None
+        self.output = None

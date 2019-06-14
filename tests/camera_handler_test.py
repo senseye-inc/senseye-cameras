@@ -23,5 +23,3 @@ def test_camera_handler():
 
     nt.assert_greater(os.stat(TMP_VIDEO).st_size, 0)
     os.remove(TMP_VIDEO)
-
-test_camera_handler()

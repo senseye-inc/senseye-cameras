@@ -3,15 +3,14 @@ import numpy as np
 
 from senseye_utils.date_utils import timestamp_now
 
-from . camera import Camera
+from . input import Input
 
 log = logging.getLogger(__name__)
 
 
-class RawVideoCamera(Camera):
+class CameraRawVideo(Input):
     '''
     Treats raw video as a camera.
-
     Args:
         id (str): path to the raw video file.
         config (dict): Configuration dictionary. Accepted keywords:
@@ -19,15 +18,16 @@ class RawVideoCamera(Camera):
     '''
 
     def __init__(self, id=0, config={}):
-        Camera.__init__(self, id=id, config=config)
-        self.camera = None
-        self.res = config.get('res', None)
+        defaults = {
+            'res': (1920, 1080),
+        }
+        Input.__init__(self, id=id, config=config, defaults=defaults)
 
     def open(self):
         '''
         Opens raw video as a bytes file.
         '''
-        self.camera = open(self.id, 'rb')
+        self.input = open(self.id, 'rb')
         self.log_start()
 
     def read(self):
@@ -38,14 +38,15 @@ class RawVideoCamera(Camera):
         frame = None
 
         # Length of frame in bytes
-        frame_length = np.uint8().itemsize * np.product(self.res)
-        bytes = self.camera.read(frame_length)
+        frame_length = np.uint8().itemsize * np.product(self.config.get('res'))
+        frame_bytes = self.input.read(frame_length)
 
-        buf = np.frombuffer(bytes, dtype=np.uint8)
+        buf = np.frombuffer(frame_bytes, dtype=np.uint8)
         if buf.size != 0:
-            frame = buf.reshape(self.res)
+            frame = buf.reshape(self.config.get('res'))
         return frame, timestamp_now()
 
     def close(self):
-        if self.camera:
-            self.camera.close()
+        if self.input:
+            self.input.close()
+        self.input = None

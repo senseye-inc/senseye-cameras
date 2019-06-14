@@ -1,8 +1,8 @@
 import logging
 
 from senseye_utils import LoopThread, RapidEvents
-from . cameras.camera_factory import create_camera
-from . recorders.recorder_factory import create_recorder
+from . input.input_factory import create_input
+from . output.output_factory import create_output
 
 log = logging.getLogger(__name__)
 
@@ -32,8 +32,8 @@ class CameraHandler(LoopThread):
         if self.camera_feed is None:
             self.camera_feed = f'camera_handler:publish:{camera_type}:{camera_id}'
 
-        self.camera = create_camera(camera_type=camera_type, config=camera_config, id=camera_id)
-        self.recorder = create_recorder(recorder_type=recorder_type, path=path, config=recorder_config)
+        self.camera = create_input(type=camera_type, config=camera_config, id=camera_id)
+        self.recorder = create_output(type=recorder_type, path=path, config=recorder_config)
 
         self.reading = False
         self.writing = False

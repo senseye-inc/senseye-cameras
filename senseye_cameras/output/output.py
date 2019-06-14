@@ -1,4 +1,3 @@
-import os
 import json
 import logging
 import tempfile
@@ -7,7 +6,7 @@ from pathlib import Path
 log = logging.getLogger(__name__)
 
 
-class Recorder:
+class Output:
     '''
     General interface for frame writing.
     Takes a path, config.
@@ -18,11 +17,12 @@ class Recorder:
     tmp_paths allow users to change 'path' while the 'tmp_path' is being written to.
     '''
 
-    def __init__(self, path=None, config={}):
+    def __init__(self, path=None, config={}, defaults={}):
         self.set_path(path=path)
         self.set_tmp_path(path=path)
 
-        self.config = config
+        self.output = None
+        self.config = {**defaults, **config}
 
     def set_path(self, path=None):
         '''

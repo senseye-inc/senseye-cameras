@@ -2,7 +2,7 @@ import logging
 
 from senseye_utils import LoopThread, RapidEvents
 
-from . cameras.camera_factory import create_camera
+from . input.input_factory import create_input
 
 log = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class CameraReader(LoopThread):
         self.frequency = camera_config.get('fps', -1)
         LoopThread.__init__(self, frequency=self.frequency)
 
-        self.camera = create_camera(camera_type=camera_type, config=camera_config, id=camera_id)
+        self.camera = create_input(type=camera_type, config=camera_config, id=camera_id)
         self.camera_type = camera_type
         self.camera_id = camera_id
 

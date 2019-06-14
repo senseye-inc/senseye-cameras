@@ -1,13 +1,11 @@
 import logging
-import tempfile
-from pathlib import Path
 
-from . recorder import Recorder
+from . output import Output
 
 log = logging.getLogger(__name__)
 
 
-class RawRecorder(Recorder):
+class VideoRaw(Output):
     '''
     Records raw video using python file IO.
     Writes to a temp file.
@@ -18,18 +16,18 @@ class RawRecorder(Recorder):
     '''
 
     def __init__(self, path=None, **kwargs):
-        Recorder.__init__(self, path=path)
+        Output.__init__(self, path=path)
 
         try:
-            self.recorder = open(self.tmp_path, 'bw')
+            self.output = open(self.tmp_path, 'bw')
             self.log_start()
         except Exception as e:
             log.error(f'Failed to initialize recorder: {self.tmp_path} with exception: {e}.')
 
     def write(self, frame=None):
-        if frame is not None and self.recorder:
+        if frame is not None and self.output:
             try:
-                self.recorder.write(frame)
+                self.output.write(frame)
 
                 if 'res' not in self.config:
                     self.config['res'] = frame.shape
@@ -40,8 +38,8 @@ class RawRecorder(Recorder):
         Closes file handle.
         Renames tmp file.
         '''
-        if self.recorder:
-            self.recorder.close()
-            self.recorder = None
+        if self.output:
+            self.output.close()
+            Output.close(self)
 
-            Recorder.close(self)
+        self.output = None

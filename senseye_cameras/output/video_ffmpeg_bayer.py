@@ -2,13 +2,13 @@ import logging
 from pathlib import Path
 from subprocess import Popen, PIPE
 
-from . recorder import Recorder
+from . output import Output
 from .. utils import ffmpeg_string
 
 log = logging.getLogger(__name__)
 
 
-class FfmpegBayerRecorder(Recorder):
+class VideoFfmpegBayer(Output):
     '''
     Records compressed video using ffmpeg.
     Splits bayer video into 4 streams: 2 green, 1 red, 1 blue.
@@ -25,20 +25,14 @@ class FfmpegBayerRecorder(Recorder):
     '''
 
     def __init__(self, path=None, config={}):
-        # Recorder.__init__(self, path=path)/
-        self.config = config
-
-        # configuration
-        self.defaults = {
+        defaults = {
             'fps': 30,
             'pixel_format': 'gray',
             'codec': 'ffv1',
             'format': 'rawvideo',
             'res': (900, 900),
         }
-        self.config = {**self.defaults, **config}
-
-        Path(self.path).mkdir(parents=True, exist_ok=True)
+        Output.__init__(self, path=path, config=config, defaults=defaults)
 
         # create a Popen ffmpeg process for each bayer_channel
         # assign an attribute to the process object
@@ -80,4 +74,3 @@ class FfmpegBayerRecorder(Recorder):
     def close(self):
         for c in self.bayer_channels:
             getattr(self, c).kill()
-        self.log_stop()

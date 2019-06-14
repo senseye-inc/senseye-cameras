@@ -3,12 +3,12 @@ import platform
 import logging
 import signal
 from subprocess import Popen, PIPE, STDOUT
-from . recorder import Recorder
+from . output import Output
 
 log = logging.getLogger(__name__)
 
 
-class FfmpegAudio(Recorder):
+class AudioFfmpeg(Output):
     '''
     Records raw video using python file IO.
     Writes to a temp file.
@@ -18,8 +18,8 @@ class FfmpegAudio(Recorder):
         path (str): Output path of video.
     '''
 
-    def __init__(self, path=None, config={}):
-        Recorder.__init__(self, path=path)
+    def __init__(self, path=None, **kwargs):
+        Output.__init__(self, path=path)
         self.process = None
         self.cmd = None
         self.generate_cmd()
@@ -67,7 +67,7 @@ class FfmpegAudio(Recorder):
                     os.kill(signal.CTRL_C_EVENT, 0)
                 if platform.system() == 'Darwin' or platform.system() == 'Linux':
                     self.process.send_signal(signal.SIGINT)
-            self.process = None
-            self.recorder = None
+            Output.close(self)
 
-            Recorder.close(self)
+        self.process = None
+        self.recorder = None

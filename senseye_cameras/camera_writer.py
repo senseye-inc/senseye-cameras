@@ -2,7 +2,7 @@ import logging
 
 from senseye_utils import LoopThread, SafeQueue, RapidEvents
 
-from . recorders.recorder_factory import create_recorder
+from . output.output_factory import create_output
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class CameraWriter(LoopThread):
         self.frequency = recorder_config.get('fps', -1)
         LoopThread.__init__(self, frequency=self.frequency)
 
-        self.recorder = create_recorder(recorder_type=recorder_type, path=path, config=recorder_config)
+        self.recorder = create_output(type=recorder_type, path=path, config=recorder_config)
         self.frame_q = SafeQueue(100)
         self.path = path
 

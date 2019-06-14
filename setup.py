@@ -11,14 +11,12 @@ setup(
     version=VERSION,
     packages=[
         'senseye_cameras',
-        'senseye_cameras.cameras',
-        'senseye_cameras.recorders',
+        'senseye_cameras.input',
+        'senseye_cameras.output',
     ],
     install_requires=[
         'senseye_utils >= 0.9.2',
         'opencv-python',
         'numpy',
-        'sounddevice',
-        'soundfile'
     ],
 )
