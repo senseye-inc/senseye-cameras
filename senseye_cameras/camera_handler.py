@@ -1,8 +1,8 @@
 import logging
 
-from senseye_utils import LoopThread
-from . camera_reader import CameraReader
-from . camera_writer import CameraWriter
+from senseye_utils import LoopThread, RapidEvents
+from . input.input_factory import create_input
+from . output.output_factory import create_output
 
 log = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class CameraHandler(LoopThread):
     Args:
         camera_feed (str): RapidEvents channel where frames are published.
         viewer (bool): Whether to display read in frames.
-        
+
         camera_type (str): See create_camera.
         camera_config (dict)
         camera_id (str OR int)
@@ -24,35 +24,55 @@ class CameraHandler(LoopThread):
         recorder_config (str)
         path (str): file frames are written to.
     '''
-    def __init__(self, camera_feed=None, viewer=False,
+    def __init__(self, camera_feed=None,
         camera_type='usb', camera_config={}, camera_id=0,
         recorder_type='raw', recorder_config={}, path=None,
     ):
-        self.reader = CameraReader(
-            camera_feed=camera_feed,
-            camera_type=camera_type,
-            camera_config=camera_config,
-            camera_id=camera_id,
-        )
+        self.camera_feed = camera_feed
+        if self.camera_feed is None:
+            self.camera_feed = f'camera_handler:publish:{camera_type}:{camera_id}'
 
-        self.writer = CameraWriter(
-            camera_feed=camera_feed,
-            recorder_type=recorder_type,
-            recorder_config=recorder_config,
-            path=path,
-        )
+        self.camera = create_input(type=camera_type, config=camera_config, id=camera_id)
+        self.recorder = create_output(type=recorder_type, path=path, config=recorder_config)
 
-        LoopThread.__init__(self, frequency=self.reader.frequency)
+        self.reading = False
+        self.writing = False
 
-    def loop(self):
-        frame, timestamp = self.reader.camera.read()
-        if frame is not None:
-            self.writer.recorder.write(frame)
-            self.reader.re.publish(self.reader.camera_feed, frame=frame, timestamp=timestamp)
+        self.re = RapidEvents(f'camera_handler:{camera_type}:{camera_id}:{recorder_type}')
 
-    def on_start(self):
-        self.reader.on_start()
+        LoopThread.__init__(self, frequency=camera_config.get('fps', -1))
+
+    def set_path(self, path=None):
+        log.info(f'Recorder path set to {path}')
+        self.recorder.set_path(path)
+
+    def start_reading(self):
+        log.info(f'Camera reading.')
+        self.camera.open()
+        self.reading = True
+
+    def start_writing(self):
+        log.info('Recorder writing.')
+        self.writing = True
+
+    def stop_reading(self):
+        log.info(f'Camera closing.')
+        self.reading = False
+        self.camera.close()
+
+    def stop_writing(self):
+        log.info('Recorder closing.')
+        self.writing = False
+        self.recorder.close()
 
     def on_stop(self):
-        self.reader.on_stop()
-        self.writer.on_stop()
+        self.stop_reading()
+        self.stop_writing()
+
+    def loop(self):
+        if self.reading:
+            frame, timestamp = self.camera.read()
+            if frame is not None:
+                self.re.publish(self.camera_feed, frame=frame, timestamp=timestamp)
+                if self.writing:
+                    self.recorder.write(frame)

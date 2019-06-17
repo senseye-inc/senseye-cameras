@@ -15,22 +15,19 @@ higher level modules:
 
     AudioRecorder: continuously listens to and writes audio to disk.
 '''
-from . cameras.camera_factory import create_camera
-from . recorders.recorder_factory import create_recorder
+from . input.input_factory import create_input
+from . output.output_factory import create_output
 
-from . cameras.pylon_camera import PylonCamera
-from . cameras.raw_video_camera import RawVideoCamera
-from . cameras.usb_camera import UsbCamera
+from . input.camera_pylon import CameraPylon
+from . input.camera_raw_video import CameraRawVideo
+from . input.camera_usb import CameraUsb
 
-from . recorders.raw_recorder import RawRecorder
-from . recorders.ffmpeg_recorder import FfmpegRecorder
-from . recorders.ffmpeg_bayer_recorder import FfmpegBayerRecorder
+from . output.video_raw import VideoRaw
+from . output.video_ffmpeg import VideoFfmpeg
+from . output.video_ffmpeg_bayer import VideoFfmpegBayer
+from . output.audio_ffmpeg import AudioFfmpeg
 
 from . camera_handler import CameraHandler
 from . camera_reader import CameraReader
 from . camera_writer import CameraWriter
 from . camera_viewer import CameraViewer
-
-from . audio.webcam_audio import WebcamAudio
-from . audio.audio import Audio
-from . audio_recorder import AudioRecorder

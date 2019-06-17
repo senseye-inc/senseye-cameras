@@ -3,12 +3,12 @@ import logging
 
 from senseye_utils.date_utils import timestamp_now
 
-from . camera import Camera
+from . input import Input
 
 log = logging.getLogger(__name__)
 
 
-class UsbCamera(Camera):
+class CameraUsb(Input):
     '''
     Opens a usb camera or video using OpenCV.
 
@@ -21,16 +21,11 @@ class UsbCamera(Camera):
     '''
 
     def __init__(self, id=0, config={}):
-        Camera.__init__(self, id=id, config=config)
-
-        # set up config
-        self.defaults = {
+        defaults = {
             'fps': 30,
             'codec': 'MJPG',
         }
-        self.config = {**self.defaults, **self.config}
-
-        self.camera = None
+        Input.__init__(self, id=id, config=config, defaults=defaults)
 
     def configure(self):
         '''
@@ -41,36 +36,36 @@ class UsbCamera(Camera):
         Logs camera start.
         '''
         if 'fps' in self.config:
-            self.camera.set(cv2.CAP_PROP_FPS, self.config.get('fps'))
+            self.input.set(cv2.CAP_PROP_FPS, self.config.get('fps'))
         if 'codec' in self.config:
-            self.camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*self.config.get('codec')))
+            self.input.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*self.config.get('codec')))
         if 'res' in self.config:
-            self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.config.get('res')[0])
-            self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.config.get('res')[1])
+            self.input.set(cv2.CAP_PROP_FRAME_WIDTH, self.config.get('res')[0])
+            self.input.set(cv2.CAP_PROP_FRAME_HEIGHT, self.config.get('res')[1])
 
-        self.config['res'] = (int(self.camera.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(self.camera.get(cv2.CAP_PROP_FRAME_WIDTH)), 3)
-        self.config['fps'] = (int(self.camera.get(cv2.CAP_PROP_FPS)))
-        self.config['codec'] = (int(self.camera.get(cv2.CAP_PROP_FOURCC)))
+        self.config['res'] = (int(self.input.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(self.input.get(cv2.CAP_PROP_FRAME_WIDTH)), 3)
+        self.config['fps'] = (int(self.input.get(cv2.CAP_PROP_FPS)))
+        self.config['codec'] = (int(self.input.get(cv2.CAP_PROP_FOURCC)))
 
-        self.log_camera_start()
 
     def open(self):
-        self.camera = cv2.VideoCapture(self.id)
+        self.input = cv2.VideoCapture(self.id)
 
-        if not self.camera.isOpened():
+        if not self.input.isOpened():
             log.warning(f'Video {self.id} failed to open. Video is corrupt, or an unreadable format.')
         else:
             self.configure()
+        self.log_start()
 
     def read(self):
         '''
         Reads in frames.
         Converts frames from BGR to the more commonly used RGB format.
         '''
-        if self.camera is None:
+        if self.input is None:
             return None, timestamp_now()
 
-        ret, frame = self.camera.read()
+        ret, frame = self.input.read()
 
         if not ret or frame is None:
             return None, timestamp_now()
@@ -80,6 +75,6 @@ class UsbCamera(Camera):
         return frame, timestamp_now()
 
     def close(self):
-        if self.camera:
-            self.camera.release()
-            self.camera = None
+        if self.input:
+            self.input.release()
+        self.input = None
