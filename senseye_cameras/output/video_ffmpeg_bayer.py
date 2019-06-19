@@ -47,9 +47,7 @@ class VideoFfmpegBayer(Output):
         self.log_start()
 
     def bayer_frame(self, frame=None, channel=None):
-        '''
-        Split the given frame based on channel given.
-        '''
+        '''Split the given frame based on channel given.'''
         if channel == 'g1':
             return frame[0::2,0::2]
         elif channel == 'r':

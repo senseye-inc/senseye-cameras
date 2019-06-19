@@ -25,32 +25,24 @@ class CameraWriter(LoopThread):
         self.frame_q = SafeQueue(100)
         self.path = path
 
-        self.re = None
+        self.re = RapidEvents(f'camera_writer:{self.path}')
         self.camera_feed = camera_feed
 
     def set_path(self, path=None):
         self.recorder.set_path(path)
 
     def on_start(self):
-        '''
-        Initialize RapidEvents object.
-        '''
-        self.re = RapidEvents(f'camera_writer:{self.path}')
+        '''Connect RapidEvents object.'''
         self.re.connect(self.on_frame_read, self.camera_feed)
         log.info(f"Creating camera writer. Listening to {self.camera_feed}")
 
     def on_frame_read(self, frame=None):
-        '''
-        Appends frames to a queue upon receiving a frame_read event.
-        '''
+        '''Appends frames to a queue upon receiving a frame_read event.'''
         if frame is not None:
             self.frame_q.put_nowait(frame)
 
     def on_stop(self):
-        '''
-        Cleans up our recorder and RapidEvents instances.
-        '''
-
+        '''Cleans up our recorder and RapidEvents instances.'''
         # push remaning frames to disk
         remaining_frames = self.frame_q.remove_existing()
         for frame in remaining_frames:
@@ -58,11 +50,11 @@ class CameraWriter(LoopThread):
 
         if self.recorder:
             self.recorder.close()
-            self.recorder = None
+        self.recorder = None
 
         if self.re:
             self.re.stop()
-            self.re = None
+        self.re = None
 
     def loop(self):
         '''
