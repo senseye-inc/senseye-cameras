@@ -25,10 +25,7 @@ class Output:
         self.config = {**defaults, **config}
 
     def set_path(self, path=None):
-        '''
-        Sets up 'path' for writing.
-        Makes parent directories if needed.
-        '''
+        '''Preps self.path by creating parent directories.'''
         self.path = Path(path).absolute()
         if self.path.exists():
             log.warning(f'{self.path} exists, overriding')
@@ -36,15 +33,13 @@ class Output:
         log.info(f'{self.__class__.__name__} path set to {self.path}')
 
     def set_tmp_path(self, path):
-        '''
-        Creates a temporary file that lives in the same directory as 'path'.
-        '''
+        '''Generates a tmpfile name in 'path's directory.'''
         path = Path(path)
         self.tmp_path = tempfile.NamedTemporaryFile(
             prefix=path.stem,
             dir=path.parent,
             suffix=path.suffix,
-            delete=False
+            delete=True
         ).name
         log.debug(f'{self.__class__.__name__} tmp path set to {self.tmp_path}')
 
@@ -78,9 +73,7 @@ class Output:
         )
 
     def log_start(self):
-        '''
-        Logs relevant information upon record start.
-        '''
+        '''Logs relevant information upon record start.'''
         log.info(
             f'\n'
             f'---------- Starting {self.__class__.__name__}. ----------\n'

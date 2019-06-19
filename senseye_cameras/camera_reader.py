@@ -20,46 +20,36 @@ class CameraReader(LoopThread):
     '''
 
     def __init__(self, camera_feed=None, camera_type='usb', camera_config={}, camera_id=0):
-        # lower frequency if we're reading from a video
-        self.frequency = camera_config.get('fps', -1)
-        LoopThread.__init__(self, frequency=self.frequency)
+        LoopThread.__init__(self, frequency=-1)
 
-        self.camera = create_input(type=camera_type, config=camera_config, id=camera_id)
-        self.camera_type = camera_type
         self.camera_id = camera_id
+        self.camera_type = camera_type
+        self.camera = create_input(type=camera_type, config=camera_config, id=camera_id)
+        self.camera.open()
 
-        self.re = None
-        self.camera_feed = camera_feed
-        if self.camera_feed is None:
-            self.camera_feed = f'camera_reader:publish:{camera_type}:{camera_id}'
+        self.re = RapidEvents(f'camera_reader:{str(self)}')
+        self.camera_feed = camera_feed if camera_feed else f'camera_reader:publish:{camera_type}:{camera_id}'
 
     def on_start(self):
-        '''
-        Opens the camera and initializes RapidEvents.
-        '''
-        self.camera.open()
-        self.re = RapidEvents(f'camera_reader:{self.camera_type}:{self.camera_id}')
-        log.info(f"Creating camera_reader tied to {self.camera_type}:{self.camera_id}. Publishing to {self.camera_feed}")
-
+        log.info(f"Creating camera_reader tied to {str(self)}. Publishing to {self.camera_feed}")
 
     def loop(self):
-        '''
-        Reads in frames.
-        '''
+        '''Reads in frames.'''
         frame, timestamp = self.camera.read()
         if frame is not None:
             self.re.publish(self.camera_feed, frame=frame, timestamp=timestamp)
 
     def on_stop(self):
-        '''
-        Cleans up our camera and RapidEvents instances.
-        '''
+        '''Cleans up our camera and RapidEvents instances.'''
         if self.camera:
             self.camera.close()
-            self.camera = None
+        self.camera = None
 
         if self.re:
             self.re.stop()
-            self.re = None
+        self.re = None
 
-        log.info(f'Camera {self.camera_type}:{self.camera_id} closing.')
+        log.info(f'Camera {str(self)} closing.')
+
+    def __str__(self):
+        return f'{self.camera_type}:{self.camera_id}'

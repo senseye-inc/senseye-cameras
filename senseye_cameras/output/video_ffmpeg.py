@@ -37,9 +37,7 @@ class VideoFfmpeg(Output):
         self.process = None
 
     def generate_codec(self):
-        '''
-        Determines a good codec to use based on path.suffix.
-        '''
+        '''Determines a good codec to use based on path.suffix.'''
         codec_lookup = {
             '.avi': 'huffyuv',
             '.mp4': 'libx264 -crf 0 -preset ultrafast',

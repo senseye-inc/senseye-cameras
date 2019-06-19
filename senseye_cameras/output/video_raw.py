@@ -34,12 +34,8 @@ class VideoRaw(Output):
             except: pass
 
     def close(self):
-        '''
-        Closes file handle.
-        Renames tmp file.
-        '''
+        '''Closes file handle and renames tmp file.'''
         if self.output:
             self.output.close()
             Output.close(self)
-
         self.output = None

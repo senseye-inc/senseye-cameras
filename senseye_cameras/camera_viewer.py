@@ -24,7 +24,6 @@ class CameraViewer(LoopThread):
         self.scale = scale
         self.frame = None
 
-
         self.re = RapidEvents(f'camera_viewer:{self.camera_feed}')
         self.re.connect(self.on_frame_read, self.camera_feed)
 
@@ -47,7 +46,6 @@ class CameraViewer(LoopThread):
         # resize frame
         self.frame = cv2.resize(frame, (int(frame.shape[1] * self.scale), int(frame.shape[0] * self.scale)))
 
-
     def loop(self):
         if self.frame is not None:
             cv2.imshow(f'camera_viewer:{self.camera_feed}', self.frame)
@@ -57,4 +55,4 @@ class CameraViewer(LoopThread):
         cv2.destroyAllWindows()
         if self.re:
             self.re.stop()
-            self.re = None
+        self.re = None

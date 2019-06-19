@@ -24,9 +24,7 @@ class CameraRawVideo(Input):
         Input.__init__(self, id=id, config=config, defaults=defaults)
 
     def open(self):
-        '''
-        Opens raw video as a bytes file.
-        '''
+        '''Opens raw video as a bytes file.'''
         self.input = open(self.id, 'rb')
         self.log_start()
 
