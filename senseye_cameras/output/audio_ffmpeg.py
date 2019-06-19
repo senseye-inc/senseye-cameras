@@ -29,7 +29,7 @@ class AudioFfmpeg(Output):
             self.cmd = f'ffmpeg -f avfoundation -hide_banner -loglevel warning -y -i :0 {self.tmp_path}'.split()
         else:
             audio_device = self.get_first_dshow_audio_device()
-            self.cmd = f'ffmpeg -f dshow -y -i audio={audio_device} {self.tmp_path}'
+            self.cmd = f'ffmpeg -f dshow -hide_banner -loglevel warning -y -i audio={audio_device} {self.tmp_path}'
 
     def get_first_dshow_audio_device(self):
         # get ffmpeg list device output
