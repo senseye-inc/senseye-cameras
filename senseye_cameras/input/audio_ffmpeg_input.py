@@ -1,6 +1,5 @@
 import os
 import logging
-import numpy as np
 from subprocess import Popen, PIPE, STDOUT
 
 from senseye_utils.date_utils import timestamp_now
@@ -12,19 +11,22 @@ log = logging.getLogger(__name__)
 
 class AudioFfmpegInput(Input):
     '''
-    Treats raw video as a camera.
+    Reads in audio using ffmpeg.
     Args:
-        id (str): path to the raw video file.
+        id (str): audio device index
         config (dict): Configuration dictionary. Accepted keywords:
-            res (tuple): frame size
+            channels (int): number of audio channels
+            block_size (int): number of bytes to read in per iteration
+            samplerate (int): audio sample rate
+            format (str): audio codec
     '''
 
     def __init__(self, id=0, config={}):
         defaults = {
             'channels': 2,
-            'format': 's32le',
             'block_size': 64,
-            'rate': 44100
+            'samplerate': 44100,
+            'format': 's32le',
         }
         Input.__init__(self, id=id, config=config, defaults=defaults)
 

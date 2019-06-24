@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 def create_output(type='usb', *args, **kwargs):
     '''
     Factory method for creating recorders.
-    Currently supports 'raw', 'ffmpeg_bayer', 'ffmpeg', 'audio'.
+    Supports 'raw', 'ffmpeg_bayer', 'ffmpeg', 'audio_ffmpeg', 'audio_port'
     '''
     if type == 'raw':
         return VideoRaw(*args, **kwargs)

@@ -58,7 +58,16 @@ class Writer(LoopThread):
 
 
 class Stream(LoopThread):
-    '''IO Stream with a reader/writer on seperate threads.'''
+    '''
+    IO Stream with a reader/writer on seperate threads.
+
+    Args:
+        input_type/input_config/id: see create_input.
+        output_type/output_config/path: see create_output
+        reading/writing (bool): whether to read/write on start.
+        on_read (func): called on frame read. Function should take fn(data=None, timestamp=None) as args.
+        on_read/on_write (func): called on frame write. Function should take fn(data=None)
+    '''
 
     def __init__(self,
         input_type='usb', input_config={}, id=0,
@@ -106,6 +115,11 @@ class Stream(LoopThread):
         self.reader = None
         self.reading = False
 
+    def refresh_q(self):
+        '''Purges the reader queue.'''
+        with self.q.mutex:
+            self.q.queue.clear()
+
     ####################
     # WRITER FUNCTIONS
     ####################
@@ -113,6 +127,9 @@ class Stream(LoopThread):
         self.writing = True
         if self.writer is None:
             self.writer = Writer(self.q, on_write=self.on_write, type=self.output_type, config=self.output_config, path=self.path)
+
+        self.refresh_q()
+
         self.writer.start()
 
     def stop_writing(self):

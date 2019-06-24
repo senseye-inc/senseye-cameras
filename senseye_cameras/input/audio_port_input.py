@@ -1,7 +1,3 @@
-"""
-Script that contains code to record audio from a webcam
-Author: Jacob Schofield (jacob.schofield@senseye.co) - May 2019
-"""
 import logging
 try:
     import sounddevice as sd
@@ -15,15 +11,22 @@ log = logging.getLogger(__name__)
 
 
 class AudioPortInput(Input):
-    '''Handles audio recording audio using the sounddevice api for portaudio'''
+    '''
+    Reads in audio using portaudio/sounddevice.
+    Args:
+        id (str): device index
+        config (dict): Configuration dictionary. Accepted keywords:
+            channels (int): number of audio channels
+            block_size (int): number of bytes to read in per iteration
+            samplerate (int): audio sample rate
+    '''
 
     def __init__(self, id=0, config={}):
 
         defaults = {
-            'samplerate': 44100,
             'channels': 1,
-            'device': id,
             'blocksize': 1024,
+            'samplerate': 44100,
         }
         Input.__init__(self, id=id, config=config, defaults=defaults)
 
@@ -31,7 +34,7 @@ class AudioPortInput(Input):
         '''
         Supported configurations: samplerate, channels, blocksize
         '''
-        device_info = sd.query_devices(self.config['device'], 'input')
+        device_info = sd.query_devices(self.id, 'input')
         if 'samplerate' not in self.config:
             self.config['samplerate'] = int(device_info['default_samplerate'])
         if 'channels' not in self.config:
@@ -42,13 +45,13 @@ class AudioPortInput(Input):
         try:
             self.configure()
             self.audio = sd.InputStream(
-                device=self.config['device'],
+                device=self.id,
                 channels=self.config['channels'],
                 samplerate=self.config['samplerate']
             )
             self.audio.start()
         except Exception as e:
-            log.warning(f'Failed to load audio stream: {exc}')
+            log.warning(f'Failed to load audio stream: {e}')
         self.log_start()
 
     def read(self):

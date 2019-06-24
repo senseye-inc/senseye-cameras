@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 def create_input(type='usb', *args, **kwargs):
     '''
     Factory method for creating media input.
-    Currently supports 'usb', 'video', 'pylon', 'raw_video', 'audio'.
+    Supports 'usb', 'video', 'pylon', 'raw_video', 'audio_ffmpeg', 'audio_port'.
     '''
     if type == 'usb' or type == 'video':
         return CameraUsb(*args, **kwargs)

@@ -20,57 +20,77 @@ nosetests
 This package uses IPC (inter-process-communication) from senseye_utils.
 
 ```python
-from senseye_cameras import CameraReader, CameraWriter, CameraViewer, CameraHandler
+import time
+from senseye_cameras import create_input, create_output
 
+# create and open various types of cameras
+pylon_cam = create_input(type='pylon', config={'pfs': '/path/to/pfs.pfs'}, id=0)
+pylon_cam.open()
+frame, timestamp = pylon_cam.read()
+pylon_cam.close()
 
-"""
-CameraReader(camera_feed=None, camera_type='usb', camera_config={}, camera_id=0)
-    camera_feed: event to be emitted on every frame read.
-    camera_type: currently supports 'usb', 'video', 'raw_video', and 'pylon'.
-    camera_config: currently supports keys: 'fps', 'res', and 'codec'.
-    camera_id: camera identifier.
+usb_cam = create_input(type='usb', id=0)
+usb_cam.open()
+frame, timestamp = usb_cam.read()
+usb_cam.close()
 
-CameraWriter(camera_feed=None, path=None, recorder_type='raw', recorder_config={})
-    camera_feed: event we listen to for frames.
-    path: where to write video.
-    recorder_type: currently supports 'raw', 'ffmpeg', 'ffmpeg_bayer'
-    recorder_config: currently supports keys: 'res', 'fps'
+# almost all classes/methods have extensive documentation that can be accessed via the 'help' function
 
-CameraViewer(camera_feed=None)
-    camera_feed: event we listen to for frames.
+# show docs that lists supported input types
+help(create_input)
 
-CameraHandler(camera_feed=None, viewer=False,
-    camera_type='usb', camera_config={}, camera_id=0,
-    recorder_type='raw', recorder_config={}, path=None,
-    process_manager=None)
-    viewer: whether to open a camera_viewer or not
-"""
+# show docs that lists supported output types
+help(create_output)
 
-# individually connecting CameraReader and CameraWriter
-# NOTE: CameraViewer imshows using an opencv window, which must run on the main thread/a seperate process
-cr = CameraReader(camera_feed='usb0', camera_type='usb', camera_config={'fps': 60}, camera_id=0)
-cw = CameraWriter(camera_feed='usb0', path='./usb_video.avi', recorder_type='ffmpeg', recorder_config={'fps': 60})
-cr.start()
-cw.start()
-time.sleep(5)
+# camera docuemntation
+help(pylon_cam)
+help(usb_cam)
 
-# connecting CameraReader, CameraWriter, CameraViewer using senseye_utils ProcessManager
-from senseye_utils import ProcessManager
-pm = ProcessManager()
+# a Stream is a higher-level class that links an input/output.
+from senseye_cameras import Stream
 
-pm.add_process(CameraReader, camera_feed='usb0', camera_id=0)
-pm.add_process(CameraWriter, camera_feed='usb0', path='./usb_video.avi')
-pm.add_process(CameraViewer, camera_feed='usb0')
+# Stream kwarg docs
+help(Stream)
 
-# adding additional cameras is easy
-pm.add_process(CameraReader, camera_feed='usb1', camera_id=1)
-pm.add_process(CameraViewer, camera_feed='usb1')
+# this stream opens a usb camera and writes encoded frames to 'video.avi'
+s = Stream(
+    input_type='usb',
+    output_type='ffmpeg', config={'fps': 30}, path='./video.avi',
+)
+s.start()
 
-pm.start()
-time.sleep(5)
-pm.stop()
+s.start_reading()
+time.sleep(2)
 
-# using CameraHandler, which automagically does the above for you
-# CameraHandler will automatically generate a camera_feed string if you do not provide one
-ch = CameraHandler(camera_type='usb', camera_id=0, path='./usb_video.avi', viewer=True)
+s.start_writing()
+time.sleep(2)
+
+s.stop_writing()
+time.sleep(1)
+
+s.stop()
+
+def on_frame_read(data, timestamp):
+    print(data)
+
+frames_written = 0
+def on_frame_write(data):
+    global frames_written
+    frames_written += 1
+
+# this stream opens a pylon camera and writes raw frames to 'raw.raw'
+# this stream reads/writes automatically on start
+# this stream prints out all frames read, and increments a counter on frame written
+s = Stream(
+    input_type='pylon',
+    output_type='raw', path='./raw.raw',
+    reading=True, writing=True,
+    on_read=on_frame_read, on_write=on_frame_write,
+)
+s.start()
+time.sleep(2)
+
+s.stop()
+
+print(frames_written)
 ```

@@ -1,8 +1,3 @@
-'''
-Script that contains code to read audio from a stream
-Author: Jacob Schofield (jacob.schofield@senseye.co) - May 2019
-'''
-
 import logging
 try:
     import soundfile as sf
@@ -14,13 +9,21 @@ log = logging.getLogger(__name__)
 
 
 class AudioPortOutput(Output):
-    '''Records audio from an input source to a file'''
+    '''
+    Writes audio to a file using soundfile.
+    Args:
+        path (str): Output path of video.
+        config (dict): Configuration dictionary. Accepted keywords:
+            channels (int): number of audio channels
+            samplerate (int): audio sample rate
+            subtype (str): audio type
+    '''
 
     def __init__(self, path=None, config={}):
 
         defaults = {
-            'samplerate': 44100,
             'channels': 1,
+            'samplerate': 44100,
             'subtype': 'PCM_24',
         }
 

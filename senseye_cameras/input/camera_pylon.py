@@ -1,7 +1,7 @@
 import logging
 try:
     from pypylon import pylon
-except Exception:
+except:
     pylon = None
 
 from senseye_utils.date_utils import timestamp_now
@@ -20,6 +20,7 @@ class CameraPylon(Input):
         config (dict): Configuration dictionary. Accepted keywords:
             pfs (str): path to a pfs file.
     '''
+
     def __init__(self, id=0, config={}):
         defaults = {
             'pfs': None,
