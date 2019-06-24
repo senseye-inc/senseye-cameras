@@ -20,7 +20,7 @@ class VideoFfmpeg(Output):
             fps (int)
             pixel_format (str)
             codec (str)
-            format (str)
+            format (str): defaults to 'rawvideo'
             res (tuple)
     '''
     def __init__(self, path=None, config={}):

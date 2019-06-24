@@ -21,13 +21,17 @@ from . output.output_factory import create_output
 from . input.camera_pylon import CameraPylon
 from . input.camera_raw_video import CameraRawVideo
 from . input.camera_usb import CameraUsb
+from . input.audio_ffmpeg_input import AudioFfmpegInput
+from . input.audio_port_input import AudioPortInput
 
 from . output.video_raw import VideoRaw
 from . output.video_ffmpeg import VideoFfmpeg
 from . output.video_ffmpeg_bayer import VideoFfmpegBayer
-from . output.audio_ffmpeg import AudioFfmpeg
+from . output.audio_port_output import AudioPortOutput
 
 from . camera_handler import CameraHandler
 from . camera_reader import CameraReader
 from . camera_writer import CameraWriter
 from . camera_viewer import CameraViewer
+
+from . stream import Stream

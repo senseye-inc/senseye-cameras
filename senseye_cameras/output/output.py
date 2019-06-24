@@ -43,7 +43,7 @@ class Output:
         ).name
         log.debug(f'{self.__class__.__name__} tmp path set to {self.tmp_path}')
 
-    def write(self, frame=None):
+    def write(self, data=None):
         log.warning('write not implemented.')
 
     def close(self):
@@ -53,7 +53,7 @@ class Output:
         '''
         # renames tmp_path to path
         try:
-            Path(self.tmp_path).rename(self.path)
+            Path(self.tmp_path).replace(self.path)
         except Exception as e:
             log.error(f'Recording rename failed: {e}')
 

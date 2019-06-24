@@ -17,6 +17,7 @@ setup(
     install_requires=[
         'senseye_utils >= 0.9.2',
         'opencv-python',
+        'soundfile',
         'numpy',
     ],
 )
