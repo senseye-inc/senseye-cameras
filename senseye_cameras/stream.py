@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 class Reader(LoopThread):
     '''Reads data into a queue.'''
     def __init__(self, q, on_read=None, type='usb', config={}, id=0):
-        LoopThread.__init__(self, frequency=200)
+        LoopThread.__init__(self, frequency=400)
         self.q = q
         self.on_read = on_read
 
@@ -33,7 +33,7 @@ class Reader(LoopThread):
 class Writer(LoopThread):
     '''Writes data from a queue into an output file.'''
     def __init__(self, q, on_write=None, type='ffmpeg', config={}, path=0):
-        LoopThread.__init__(self, frequency=200)
+        LoopThread.__init__(self, frequency=-1)
 
         self.q = q
         self.on_write = on_write
@@ -77,7 +77,7 @@ class Stream(LoopThread):
     ):
         LoopThread.__init__(self, frequency=1)
 
-        self.q = SafeQueue(200)
+        self.q = SafeQueue(700)
 
         self.input_type = input_type
         self.input_config = input_config

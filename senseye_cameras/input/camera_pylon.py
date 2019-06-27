@@ -77,7 +77,6 @@ class CameraPylon(Input):
             self.input.Close()
             self.input = None
 
-# Fallback for no pylon
 if pylon is None:
     class PylonCamera(Input):
         def __init__(self, *args, **kargs):
