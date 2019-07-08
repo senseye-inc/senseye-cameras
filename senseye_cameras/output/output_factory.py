@@ -5,6 +5,7 @@ from . video_ffmpeg_bayer import VideoFfmpegBayer
 from . video_ffmpeg import VideoFfmpeg
 from . audio_ffmpeg_output import AudioFfmpegOutput
 from . audio_port_output import AudioPortOutput
+from . video_emergent import VideoEmergent
 
 log = logging.getLogger(__name__)
 
@@ -24,5 +25,7 @@ def create_output(type='usb', *args, **kwargs):
         return AudioFfmpegOutput(*args, **kwargs)
     if type == 'audio_port':
         return AudioPortOutput(*args, **kwargs)
+    if type == 'video_emergent':
+        return VideoEmergent(*args, **kwargs)
 
     log.warning(f'Output type: {type} not supported.')

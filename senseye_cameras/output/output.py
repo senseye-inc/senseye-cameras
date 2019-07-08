@@ -19,7 +19,7 @@ class Output:
 
     def __init__(self, path=None, config={}, defaults={}):
         self.set_path(path=path)
-        self.set_tmp_path(path=path)
+        self.set_tmp_path(path=self.path)
 
         self.output = None
         self.config = {**defaults, **config}
@@ -30,7 +30,6 @@ class Output:
         if self.path.exists():
             log.warning(f'{self.path} exists, overriding')
         Path(self.path).parent.mkdir(parents=True, exist_ok=True)
-        log.info(f'{self.__class__.__name__} path set to {self.path}')
 
     def set_tmp_path(self, path):
         '''Generates a tmpfile name in 'path's directory.'''
@@ -41,7 +40,7 @@ class Output:
             suffix=path.suffix,
             delete=True
         ).name
-        log.debug(f'{self.__class__.__name__} tmp path set to {self.tmp_path}')
+        log.debug(f'{str(self)} tmp path set to {self.tmp_path}')
 
     def write(self, data=None):
         log.warning('write not implemented.')
@@ -51,32 +50,10 @@ class Output:
         Attempts to move the file from 'tmp_path' to 'path'.
         Writes config to path.
         '''
-        # renames tmp_path to path
         try:
             Path(self.tmp_path).replace(self.path)
         except Exception as e:
             log.error(f'Recording rename failed: {e}')
 
-        # writes config file
-        config_file = Path(self.path.parent, f'{self.__class__.__name__}.json').absolute()
-        with open(config_file, 'w') as file:
-            json.dump(self.config, file, ensure_ascii=False)
-
-        # pretty logging
-        log.info(
-            f'\n'
-            f'---------- Stopping {self.__class__.__name__}. ----------\n'
-            f'path: {self.path}\n'
-            f'config: {self.config}\n'
-            f'config_file: {config_file}\n'
-            f'----------------------------------------'
-        )
-
-    def log_start(self):
-        '''Logs relevant information upon record start.'''
-        log.info(
-            f'\n'
-            f'---------- Starting {self.__class__.__name__}. ----------\n'
-            f'tmp_path: {self.tmp_path}\n'
-            f'----------------------------------------'
-        )
+    def __str__(self):
+        return f'{self.__class__.__name__}'

@@ -1,11 +1,12 @@
 import logging
+import numpy as np
 try:
     import pyemergent
 except:
     pyemergent = None
-import numpy as np
 
 from senseye_utils.date_utils import timestamp_now
+from senseye_utils import Events
 
 from . input import Input
 
@@ -26,12 +27,32 @@ class CameraEmergent(Input):
             'res': (1920, 1080),
         }
         Input.__init__(self, id=id, config=config, defaults=defaults)
+        self.writing = False
+        self.path = None
+
+        self.e = Events()
+        self.e.connect(self.start_writing, 'emergent:start_writing')
+        self.e.connect(self.set_path, 'emergent:set_path')
+
+    def set_path(self, path):
+        self.path = path
+        if self.input:
+            self.input.set_path(self.path)
+
+    def start_writing(self):
+        self.writing = True
+        if self.input:
+            self.input.start_writing()
 
     def open(self):
-        '''Opens raw video as a bytes file.'''
         self.input = pyemergent.PyEmergent()
-        self.input.open()
-        self.log_start()
+        open_error = self.input.open()
+        if open_error != 0:
+            log.error(f'{str(self)} open error: {open_error}')
+        if self.writing:
+            self.input.start_writing()
+        if self.path:
+            self.input.set_path(self.path)
 
     def read(self):
         '''
@@ -43,8 +64,9 @@ class CameraEmergent(Input):
         try:
             frame_bytes = self.input.read()
             buf = np.frombuffer(frame_bytes, dtype=np.uint8)
-            frame = buf.reshape(self.config.get('res'))
-        except: pass
+            frame = buf.reshape(self.config.get('res')[::-1])
+        except Exception as e:
+            log.error(f'{str(self)} read error: {e}')
 
         return frame, timestamp_now()
 

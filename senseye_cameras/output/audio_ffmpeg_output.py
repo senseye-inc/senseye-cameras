@@ -34,7 +34,6 @@ class AudioFfmpegOutput(Output):
             f'-i - '
             f'{self.tmp_path}'
         )
-
         self.process = Popen(self.cmd, shell=True, stdin=PIPE)
         self.output = self.process.stdin
 

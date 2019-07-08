@@ -20,14 +20,13 @@ class AudioPortOutput(Output):
     '''
 
     def __init__(self, path=None, config={}):
-
         defaults = {
             'channels': 1,
             'samplerate': 44100,
             'subtype': 'PCM_24',
         }
-
         Output.__init__(self, path=path, config=config, defaults=defaults)
+
         self.output = sf.SoundFile(
             self.tmp_path,
             mode='w',

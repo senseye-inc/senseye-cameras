@@ -56,8 +56,7 @@ class CameraPylon(Input):
             self.input.StopGrabbing()
             self.input.StartGrabbing(pylon.GrabStrategy_OneByOne)
         except Exception as e:
-            log.error(f"Pylon camera open failed: {e}")
-        self.log_start()
+            log.error(f'{str(self)} open error: {e}')
 
     def read(self):
         frame = None
@@ -67,7 +66,7 @@ class CameraPylon(Input):
             if ret.IsValid():
                 frame = ret.GetArray()
         except TypeError as e:
-            log.error(f'PylonCamera read error: {e}')
+            log.error(f"{str(self)} read error: {e}")
         ret.Release()
 
         return frame, timestamp_now()

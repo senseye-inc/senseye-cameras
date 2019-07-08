@@ -1,12 +1,14 @@
 import os
 import time
+import shutil
 import nose.tools as nt
 
 from senseye_cameras import Stream
 
 USB_VIDEO = './tests/resources/usb_video.mp4'
 RAW_VIDEO = './tests/resources/raw_video.raw'
-TMP_VIDEO = './tests/resources/tmp.raw'
+TMP_VIDEO = './tests/resources/tmp/tmp.raw'
+TMP_DIR = './tests/resources/tmp'
 
 
 def test_stream_raw_video():
@@ -24,7 +26,7 @@ def test_stream_raw_video():
 
     nt.assert_greater(os.stat(TMP_VIDEO).st_size, 0)
     nt.assert_equal(os.stat(TMP_VIDEO).st_size, os.stat(RAW_VIDEO).st_size)
-    os.remove(TMP_VIDEO)
+    shutil.rmtree(TMP_DIR)
 
 def test_stream_usb_video():
     s = Stream(
@@ -39,4 +41,4 @@ def test_stream_usb_video():
     s.stop()
 
     nt.assert_greater(os.stat(TMP_VIDEO).st_size, 0)
-    os.remove(TMP_VIDEO)
+    shutil.rmtree(TMP_DIR)

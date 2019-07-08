@@ -22,7 +22,6 @@ class AudioPortInput(Input):
     '''
 
     def __init__(self, id=0, config={}):
-
         defaults = {
             'channels': 1,
             'blocksize': 1024,
@@ -51,8 +50,7 @@ class AudioPortInput(Input):
             )
             self.input.start()
         except Exception as e:
-            log.warning(f'Failed to load audio stream: {e}')
-        self.log_start()
+            log.warning(f'{str(self)} error: {e}')
 
     def read(self):
         '''Reads in audio blocks'''

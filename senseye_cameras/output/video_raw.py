@@ -20,7 +20,6 @@ class VideoRaw(Output):
 
         try:
             self.output = open(self.tmp_path, 'bw')
-            self.log_start()
         except Exception as e:
             log.error(f'Failed to initialize recorder: {self.tmp_path} with exception: {e}.')
 
