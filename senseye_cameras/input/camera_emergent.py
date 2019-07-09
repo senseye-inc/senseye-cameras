@@ -45,7 +45,7 @@ class CameraEmergent(Input):
             self.input.start_writing()
 
     def open(self):
-        self.input = pyemergent.PyEmergent()
+        self.input = pyemergent.PyEmergent(config=self.config)
         open_error = self.input.open()
         if open_error != 0:
             log.error(f'{str(self)} open error: {open_error}')
