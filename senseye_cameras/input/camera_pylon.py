@@ -61,18 +61,19 @@ class CameraPylon(Input):
     def read(self):
         frame = None
 
-        ret = self.input.RetrieveResult(100, pylon.TimeoutHandling_ThrowException)
-        try:
-            if ret.IsValid():
-                frame = ret.GetArray()
-        except TypeError as e:
-            log.error(f"{str(self)} read error: {e}")
-        ret.Release()
+        if self.input:
+            ret = self.input.RetrieveResult(100, pylon.TimeoutHandling_ThrowException)
+            try:
+                if ret.IsValid():
+                    frame = ret.GetArray()
+            except TypeError as e:
+                log.error(f"{str(self)} read error: {e}")
+            ret.Release()
 
         return frame, timestamp_now()
 
     def close(self):
-        if self.input.IsOpen():
+        if self.input and self.input.IsOpen():
             self.input.Close()
             self.input = None
 
