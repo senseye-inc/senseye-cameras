@@ -4,6 +4,9 @@ from setuptools import setup
 with open('.version', 'r') as f:
     VERSION = f.read()
 
+PYEMERGENT_VERSION='0.1.0'
+SENSEYE_UTILS_VERSION='0.9.2'
+
 setup(
     name='senseye_cameras',
     description='Senseye Camera Utilities',
@@ -15,9 +18,14 @@ setup(
         'senseye_cameras.output',
     ],
     install_requires=[
-        'senseye_utils >= 0.9.2',
-        'opencv-python',
+        f'pyemergent >= {PYEMERGENT_VERSION}; platform_system=="Windows"',
+        'pypylon',
+
+        'sounddevice',
         'soundfile',
+
         'numpy',
+        'opencv-python',
+        f'senseye_utils >= {SENSEYE_UTILS_VERSION}',
     ],
 )

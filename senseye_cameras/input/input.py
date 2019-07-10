@@ -25,11 +25,5 @@ class Input:
         '''Properly disposes of the camera object.'''
         log.warning("Close not implemented.")
 
-    def log_start(self):
-        '''Logs relevant information upon camera start.'''
-        log.info(
-            f'\n'
-            f'---------- Starting {self.__class__.__name__}:{self.id}. ----------\n'
-            f'config: {self.config}\n'
-            f'--------------------------------------'
-        )
+    def __str__(self):
+        return f'{self.__class__.__name__}:{self.id}'

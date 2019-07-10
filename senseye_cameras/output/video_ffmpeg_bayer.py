@@ -44,7 +44,6 @@ class VideoFfmpegBayer(Output):
             cmd = ffmpeg_string(path=file_path, **self.config)
             process = Popen(cmd.split(), stdin=PIPE)
             setattr(self, c, process)
-        self.log_start()
 
     def bayer_frame(self, frame=None, channel=None):
         '''Split the given frame based on channel given.'''

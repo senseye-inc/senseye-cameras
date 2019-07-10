@@ -55,7 +55,6 @@ class CameraUsb(Input):
             log.warning(f'Video {self.id} failed to open. Video is corrupt, or an unreadable format.')
         else:
             self.configure()
-        self.log_start()
 
     def read(self):
         '''

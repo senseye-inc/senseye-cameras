@@ -22,7 +22,6 @@ class AudioPortInput(Input):
     '''
 
     def __init__(self, id=0, config={}):
-
         defaults = {
             'channels': 1,
             'blocksize': 1024,
@@ -44,22 +43,21 @@ class AudioPortInput(Input):
         '''Opens Audio stream'''
         try:
             self.configure()
-            self.audio = sd.InputStream(
+            self.input = sd.InputStream(
                 device=self.id,
                 channels=self.config['channels'],
                 samplerate=self.config['samplerate']
             )
-            self.audio.start()
+            self.input.start()
         except Exception as e:
-            log.warning(f'Failed to load audio stream: {e}')
-        self.log_start()
+            log.warning(f'{str(self)} error: {e}')
 
     def read(self):
         '''Reads in audio blocks'''
         audio = None
 
-        if self.audio:
-            audio, overflow = self.audio.read(self.config['blocksize'])
+        if self.input:
+            audio, overflow = self.input.read(self.config['blocksize'])
             if overflow:
                 audio = None
                 log.warning('Audio block overflow')
@@ -67,9 +65,9 @@ class AudioPortInput(Input):
         return audio, timestamp_now()
 
     def close(self):
-        if self.audio:
-            self.audio.close()
-        self.audio = None
+        if self.input:
+            self.input.close()
+        self.input = None
 
 # Fallback for no pylon
 if sd is None:

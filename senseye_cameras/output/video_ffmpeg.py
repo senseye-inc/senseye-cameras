@@ -57,7 +57,6 @@ class VideoFfmpeg(Output):
             cmd = ffmpeg_string(path=self.tmp_path, **self.config)
             self.process = Popen(cmd.split(), stdin=PIPE)
             self.output = self.process.stdin
-            self.log_start()
         except Exception as e:
             log.error(f'Failed to initialize recorder: {self.path} with exception: {e}.')
 

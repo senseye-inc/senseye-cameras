@@ -56,28 +56,27 @@ class CameraPylon(Input):
             self.input.StopGrabbing()
             self.input.StartGrabbing(pylon.GrabStrategy_OneByOne)
         except Exception as e:
-            log.error(f"Pylon camera open failed: {e}")
-        self.log_start()
+            log.error(f'{str(self)} open error: {e}')
 
     def read(self):
         frame = None
 
-        ret = self.input.RetrieveResult(100, pylon.TimeoutHandling_ThrowException)
-        try:
-            if ret.IsValid():
-                frame = ret.GetArray()
-        except TypeError as e:
-            log.error(f'PylonCamera read error: {e}')
-        ret.Release()
+        if self.input:
+            ret = self.input.RetrieveResult(100, pylon.TimeoutHandling_ThrowException)
+            try:
+                if ret.IsValid():
+                    frame = ret.GetArray()
+            except TypeError as e:
+                log.error(f"{str(self)} read error: {e}")
+            ret.Release()
 
         return frame, timestamp_now()
 
     def close(self):
-        if self.input.IsOpen():
+        if self.input and self.input.IsOpen():
             self.input.Close()
             self.input = None
 
-# Fallback for no pylon
 if pylon is None:
     class PylonCamera(Input):
         def __init__(self, *args, **kargs):
