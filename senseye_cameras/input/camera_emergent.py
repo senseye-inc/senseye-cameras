@@ -25,6 +25,9 @@ class CameraEmergent(Input):
     def __init__(self, id=0, config={}):
         defaults = {
             'res': (1920, 1080),
+            'gain': 1024,
+            'fps': 100,
+            'exposure': 2400,
         }
         Input.__init__(self, id=id, config=config, defaults=defaults)
         self.writing = False
@@ -33,6 +36,14 @@ class CameraEmergent(Input):
         self.e = Events()
         self.e.connect(self.start_writing, 'emergent:start_writing')
         self.e.connect(self.set_path, 'emergent:set_path')
+
+    def configure(self):
+        width = self.input.set_param('Width', self.config['res'][0])
+        height = self.input.set_param('Height', self.config['res'][1])
+        self.config['emergent_res'] = (width, height)
+        self.config['emergent_gain'] = self.input.set_param('Gain', self.config['gain'])
+        self.config['emergent_fps'] = self.input.set_param('FrameRate', self.config['fps'])
+        self.config['emergent_exposure'] = self.input.set_param('Exposure', self.config['exposure'])
 
     def set_path(self, path):
         self.path = path
@@ -53,6 +64,8 @@ class CameraEmergent(Input):
             self.input.start_writing()
         if self.path:
             self.input.set_path(self.path)
+        self.configure()
+        self.input.start()
 
     def read(self):
         '''
