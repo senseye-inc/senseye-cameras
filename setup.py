@@ -4,7 +4,7 @@ from setuptools import setup
 with open('.version', 'r') as f:
     VERSION = f.read()
 
-PYEMERGENT_VERSION='0.1.0'
+PYEMERGENT_VERSION='0.1.2'
 SENSEYE_UTILS_VERSION='0.9.2'
 
 setup(
@@ -19,7 +19,7 @@ setup(
     ],
     install_requires=[
         f'pyemergent >= {PYEMERGENT_VERSION}; platform_system=="Windows"',
-        'pypylon',
+        'pypylon; platform_system=="Windows"',
 
         'sounddevice',
         'soundfile',
