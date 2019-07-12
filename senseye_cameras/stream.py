@@ -113,6 +113,8 @@ class Stream(LoopThread):
         self.path = path
         if self.writer:
             self.writer.set_path(path)
+        if self.input_type == 'emergent' and self.reader:
+            self.reader.input.set_path(path)
 
     ####################
     # READER FUNCTIONS
@@ -121,13 +123,16 @@ class Stream(LoopThread):
         self.reading = True
         if self.reader is None:
             self.reader = Reader(self.q, on_read=self.on_read, type=self.input_type, config=self.input_config, id=self.id, frequency=self.input_frequency)
+
         self.reader.start()
+        if self.input_type == 'emergent':
+            self.reader.input.set_path(self.path)
+
 
     def write_config(self, obj):
         config_file = Path(Path(self.path).parent, f'{obj.__class__.__name__}.json').absolute()
         with open(config_file, 'w') as file:
             json.dump(obj.config, file, ensure_ascii=False)
-
 
     def stop_reading(self):
         if self.reader:
@@ -145,16 +150,20 @@ class Stream(LoopThread):
     # WRITER FUNCTIONS
     ####################
     def start_writing(self):
-        self.writing = True
-        if self.writer is None:
-            if self.path is None:
-                self.path = f'./output/{int(time.time())}.avi'
-                log.warning(f'Writer path not set. Setting path to: {self.path}')
-            self.writer = Writer(self.q, on_write=self.on_write, type=self.output_type, config=self.output_config, path=self.path, frequency=self.output_frequency)
+        if self.input_type == 'emergent':
+            self.reader.input.start_writing()
+        else:
+            self.writing = True
+            if self.writer is None:
+                self.writer = Writer(self.q, on_write=self.on_write, type=self.output_type, config=self.output_config, path=self.path, frequency=self.output_frequency)
 
-        self.refresh_q()
+                if self.path is None:
+                    self.path = f'./output/{int(time.time())}.avi'
+                    log.warning(f'Writer path not set. Setting path to: {self.path}')
 
-        self.writer.start()
+                self.refresh_q()
+
+                self.writer.start()
 
     def stop_writing(self):
         if self.writer:
