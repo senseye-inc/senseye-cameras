@@ -1,5 +1,6 @@
 import time
 import json
+import atexit
 import logging
 from pathlib import Path
 from senseye_utils import LoopThread, SafeQueue
@@ -108,6 +109,7 @@ class Stream(LoopThread):
         self.on_write = on_write
 
         self.writer = self.reader = None
+        atexit.register(self.stop)
 
     def set_path(self, path=None):
         self.path = path
@@ -130,7 +132,10 @@ class Stream(LoopThread):
 
 
     def write_config(self, obj):
-        config_file = Path(Path(self.path).parent, f'{obj.__class__.__name__}.json').absolute()
+        config_path = Path(Path(self.path).parent, f'{obj.__class__.__name__}.json')
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        config_file = config_path.absolute()
+
         with open(config_file, 'w') as file:
             json.dump(obj.config, file, ensure_ascii=False)
 
