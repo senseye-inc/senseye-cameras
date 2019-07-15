@@ -130,7 +130,10 @@ class Stream(LoopThread):
 
 
     def write_config(self, obj):
-        config_file = Path(Path(self.path).parent, f'{obj.__class__.__name__}.json').absolute()
+        config_path = Path(Path(self.path).parent, f'{obj.__class__.__name__}.json')
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        config_file = config_path.absolute()
+
         with open(config_file, 'w') as file:
             json.dump(obj.config, file, ensure_ascii=False)
 
