@@ -1,4 +1,5 @@
 import logging
+import atexit
 
 from senseye_utils.date_utils import timestamp_now
 
@@ -12,6 +13,8 @@ class Input:
         self.id = id
         self.input = None
         self.config = {**defaults, **config}
+        atexit.register(self.close)
+
 
     def open(self):
         '''Initializes the camera.'''

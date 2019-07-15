@@ -1,4 +1,5 @@
 import json
+import atexit
 import logging
 import tempfile
 from pathlib import Path
@@ -23,6 +24,7 @@ class Output:
 
         self.output = None
         self.config = {**defaults, **config}
+        atexit.register(self.close)
 
     def set_path(self, path=None):
         '''Preps self.path by creating parent directories.'''

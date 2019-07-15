@@ -1,5 +1,6 @@
 import time
 import json
+import atexit
 import logging
 from pathlib import Path
 from senseye_utils import LoopThread, SafeQueue
@@ -108,6 +109,7 @@ class Stream(LoopThread):
         self.on_write = on_write
 
         self.writer = self.reader = None
+        atexit.register(self.stop)
 
     def set_path(self, path=None):
         self.path = path
