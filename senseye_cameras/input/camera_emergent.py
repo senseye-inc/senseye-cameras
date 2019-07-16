@@ -38,9 +38,10 @@ class CameraEmergent(Input):
         height = self.input.set_param('Height', self.config['res'][1])
         self.input.set_res(width * height)
         self.config['emergent_res'] = (width, height)
-        self.config['emergent_exposure'] = self.input.set_param('Exposure', self.config['exposure'])
-        self.config['emergent_gain'] = self.input.set_param('Gain', self.config['gain'])
         self.config['emergent_fps'] = self.input.set_param('FrameRate', self.config['fps'])
+        self.config['emergent_exposure'] = self.input.set_param('Exposure', self.config['exposure'])
+        self.config['emergent_fps'] = self.input.set_param('FrameRate', self.config['fps'])
+        self.config['emergent_gain'] = self.input.set_param('Gain', self.config['gain'])
 
     def set_path(self, path):
         self.path = path
