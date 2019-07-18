@@ -5,7 +5,7 @@ with open('.version', 'r') as f:
     VERSION = f.read()
 
 PYEMERGENT_VERSION='0.1.2'
-SENSEYE_UTILS_VERSION='0.9.2'
+SENSEYE_UTILS_VERSION='0.9.5'
 
 setup(
     name='senseye_cameras',
