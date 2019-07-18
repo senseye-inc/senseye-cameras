@@ -23,7 +23,7 @@ class AudioPortOutput(Output):
         defaults = {
             'channels': 1,
             'samplerate': 44100,
-            'subtype': 'PCM_24',
+            'subtype': 'PCM_16',
         }
         Output.__init__(self, path=path, config=config, defaults=defaults)
 
