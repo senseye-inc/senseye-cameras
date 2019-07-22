@@ -82,7 +82,7 @@ class Stream(LoopThread):
 
     def __init__(self,
         input_type='usb', input_config={}, id=0,
-        output_type='ffmpeg', output_config={}, path=None,
+        output_type='ffmpeg', output_config={}, path='.',
         input_frequency=None, output_frequency=None,
         reading=False, writing=False,
         on_read=None, on_write=None,
@@ -125,8 +125,8 @@ class Stream(LoopThread):
         self.reading = True
         if self.reader is None:
             self.reader = Reader(self.q, on_read=self.on_read, type=self.input_type, config=self.input_config, id=self.id, frequency=self.input_frequency)
+            self.reader.start()
 
-        self.reader.start()
         if self.input_type == 'emergent':
             self.reader.input.set_path(self.path)
 
@@ -140,10 +140,12 @@ class Stream(LoopThread):
             json.dump(obj.config, file, ensure_ascii=False)
 
     def stop_reading(self):
+        if self.input_type == 'emergent':
+            self.reader.input.stop_reading()
         if self.reader:
             self.write_config(self.reader.input)
             self.reader.stop()
-        self.reader = None
+            self.reader = None
         self.reading = False
 
     def refresh_q(self):
@@ -171,11 +173,14 @@ class Stream(LoopThread):
                 self.writer.start()
 
     def stop_writing(self):
-        if self.writer:
-            self.write_config(self.writer.output)
-            self.writer.stop()
-        self.writer = None
-        self.writing = False
+        if self.input_type == 'emergent':
+            self.reader.input.stop_writing()
+        else:
+            if self.writer:
+                self.write_config(self.writer.output)
+                self.writer.stop()
+                self.writer = None
+            self.writing = False
 
     ####################
     # LOOPTHREAD FUNCTIONS
