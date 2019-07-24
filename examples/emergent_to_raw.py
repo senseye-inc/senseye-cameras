@@ -9,6 +9,6 @@ s = Stream(
 )
 s.start()
 
-time.sleep(5)
+time.sleep(10)
 
 s.stop()

@@ -37,11 +37,10 @@ class CameraEmergent(Input):
         width = self.input.set_param('Width', self.config['res'][0])
         height = self.input.set_param('Height', self.config['res'][1])
         self.input.set_res(width * height)
-        self.config['emergent_res'] = (width, height)
-        self.config['emergent_fps'] = self.input.set_param('FrameRate', self.config['fps'])
-        self.config['emergent_exposure'] = self.input.set_param('Exposure', self.config['exposure'])
-        self.config['emergent_fps'] = self.input.set_param('FrameRate', self.config['fps'])
-        self.config['emergent_gain'] = self.input.set_param('Gain', self.config['gain'])
+        self.config['res'] = (width, height)
+        self.config['exposure'] = self.input.set_param('Exposure', self.config['exposure'])
+        self.config['fps'] = self.input.set_param('FrameRate', self.config['fps'])
+        self.config['gain'] = self.input.set_param('Gain', self.config['gain'])
 
     def set_path(self, path):
         self.path = path
@@ -49,9 +48,22 @@ class CameraEmergent(Input):
             self.input.set_path(self.path)
 
     def start_writing(self):
+
+
         self.writing = True
         if self.input:
             self.input.start_writing()
+
+    def stop_writing(self):
+        self.writing = False
+        if self.input:
+            self.input.stop_writing()
+    def start_reading(self):
+        if self.input:
+            self.input.start_reading()
+    def stop_reading(self):
+        if self.input:
+            self.input.stop_reading()
 
     def open(self):
         self.input = pyemergent.PyEmergent(config=self.config)

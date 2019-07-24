@@ -18,15 +18,15 @@ class Input:
 
     def open(self):
         '''Initializes the camera.'''
-        log.warning("Open not implemented.")
+        log.warning(f'Open not implemented for {str(self)}.')
 
     def read(self):
-        log.warning("Read not implemented.")
+        log.warning(f'Read not implemented for {str(self)}.')
         return None, timestamp_now()
 
     def close(self):
         '''Properly disposes of the camera object.'''
-        log.warning("Close not implemented.")
+        log.warning(f'Close not implemented for {str(self)}.')
 
     def __str__(self):
         return f'{self.__class__.__name__}:{self.id}'

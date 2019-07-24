@@ -2,7 +2,7 @@ import cv2
 import logging
 
 from senseye_utils import LoopThread
-from senseye_utils.rapid_events import RapidEvents
+from senseye_utils import RapidEvents
 
 log = logging.getLogger(__name__)
 
