@@ -1,8 +1,6 @@
 import time
-import json
 import atexit
 import logging
-from pathlib import Path
 from senseye_utils import LoopThread, SafeQueue
 
 from . output.output_factory import create_output
@@ -130,20 +128,10 @@ class Stream(LoopThread):
         if self.input_type == 'emergent':
             self.reader.input.set_path(self.path)
 
-
-    def write_config(self, obj):
-        config_path = Path(Path(self.path).parent, f'{obj.__class__.__name__}.json')
-        config_path.parent.mkdir(parents=True, exist_ok=True)
-        config_file = config_path.absolute()
-
-        with open(config_file, 'w') as file:
-            json.dump(obj.config, file, ensure_ascii=False)
-
     def stop_reading(self):
         if self.input_type == 'emergent':
             self.reader.input.stop_reading()
         if self.reader:
-            self.write_config(self.reader.input)
             self.reader.stop()
             self.reader = None
         self.reading = False
@@ -177,7 +165,6 @@ class Stream(LoopThread):
             self.reader.input.stop_writing()
         else:
             if self.writer:
-                self.write_config(self.writer.output)
                 self.writer.stop()
                 self.writer = None
             self.writing = False
