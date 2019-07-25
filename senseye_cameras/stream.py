@@ -57,6 +57,7 @@ class Writer(LoopThread):
 
     def set_path(self, path=None):
         self.output.set_path(path)
+        log.info(f'{str(self)} path set to {path}')
 
     def on_stop(self):
         # clear out the current q
