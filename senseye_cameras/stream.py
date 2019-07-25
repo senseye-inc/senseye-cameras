@@ -114,8 +114,6 @@ class Stream(LoopThread):
         self.path = path
         if self.writer:
             self.writer.set_path(path)
-        if self.input_type == 'emergent' and self.reader:
-            self.reader.input.set_path(path)
 
     ####################
     # READER FUNCTIONS
@@ -126,12 +124,7 @@ class Stream(LoopThread):
             self.reader = Reader(self.q, on_read=self.on_read, type=self.input_type, config=self.input_config, id=self.id, frequency=self.input_frequency)
             self.reader.start()
 
-        if self.input_type == 'emergent':
-            self.reader.input.set_path(self.path)
-
     def stop_reading(self):
-        if self.input_type == 'emergent':
-            self.reader.input.stop_reading()
         if self.reader:
             self.reader.stop()
             self.reader = None
@@ -146,29 +139,26 @@ class Stream(LoopThread):
     # WRITER FUNCTIONS
     ####################
     def start_writing(self):
-        if self.input_type == 'emergent':
-            self.reader.input.start_writing()
-        else:
-            self.writing = True
-            if self.writer is None:
-                self.writer = Writer(self.q, on_write=self.on_write, type=self.output_type, config=self.output_config, path=self.path, frequency=self.output_frequency)
+        self.writing = True
+        if self.writer is None:
+            self.writer = Writer(self.q, on_write=self.on_write, type=self.output_type, config=self.output_config, path=self.path, frequency=self.output_frequency)
 
-                if self.path is None:
-                    self.path = f'./output/{int(time.time())}.avi'
-                    log.warning(f'Writer path not set. Setting path to: {self.path}')
+            if self.input_type == 'emergent':
+                self.writer.output.set_emergent_object(self.reader.input)
 
-                self.refresh_q()
+            if self.path is None:
+                self.path = f'./output/{int(time.time())}.avi'
+                log.warning(f'Writer path not set. Setting path to: {self.path}')
 
-                self.writer.start()
+            self.refresh_q()
+
+            self.writer.start()
 
     def stop_writing(self):
-        if self.input_type == 'emergent':
-            self.reader.input.stop_writing()
-        else:
-            if self.writer:
-                self.writer.stop()
-                self.writer = None
-            self.writing = False
+        if self.writer:
+            self.writer.stop()
+            self.writer = None
+        self.writing = False
 
     ####################
     # LOOPTHREAD FUNCTIONS

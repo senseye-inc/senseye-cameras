@@ -1,31 +1,27 @@
 import logging
 
-from senseye_utils import Events
-
 from . output import Output
 
 log = logging.getLogger(__name__)
 
 
-class VideoEmergent:
+class VideoEmergent(Output):
     def __init__(self, path=None, **kwargs):
-        # Output.__init__(self, path=path)
-        self.output = None
-        self.config = None
-        self.path = None
-        self.tmp_path = None
+        Output.__init__(self, path=path)
+
+    def set_emergent_object(self, emergent):
+        self.output = emergent
+        self.output.set_path(self.tmp_path)
+        self.output.start_writing()
 
     def write(self, frame=None):
         pass
 
-    def set_path(self, path=None):
-        pass
-
-    def set_tmp_path(self, path):
-        pass
-
     def close(self):
-        pass
+        if self.output:
+            self.output.stop_writing()
+            Output.close(self)
+            self.output = None
 
     def __str__(self):
         return f'{self.__class__.__name__}'

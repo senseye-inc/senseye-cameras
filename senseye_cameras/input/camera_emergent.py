@@ -48,8 +48,6 @@ class CameraEmergent(Input):
             self.input.set_path(self.path)
 
     def start_writing(self):
-
-
         self.writing = True
         if self.input:
             self.input.start_writing()
@@ -95,6 +93,7 @@ class CameraEmergent(Input):
 
     def close(self):
         if self.input:
+            self.input.stop_reading()
             self.input.close()
         self.input = None
 
