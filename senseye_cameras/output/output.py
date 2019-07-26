@@ -44,7 +44,7 @@ class Output:
         log.debug(f'{str(self)} tmp path set to {self.tmp_path}')
 
     def write(self, data=None):
-        log.warning('write not implemented.')
+        log.debug('write not implemented.')
 
     def close(self):
         '''

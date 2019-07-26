@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 
 class Reader(LoopThread):
     '''Reads data into a queue.'''
+
     def __init__(self, q, on_read=None, type='usb', config={}, id=0, frequency=None):
         if frequency is None:
             frequency = config.get('fps', 100)

@@ -61,16 +61,17 @@ class CameraUsb(Input):
         Reads in frames.
         Converts frames from BGR to the more commonly used RGB format.
         '''
-        if self.input is None:
-            return None, timestamp_now()
+        frame = None
 
-        ret, frame = self.input.read()
+        try:
+            ret, frame = self.input.read()
+            if not ret:
+                raise Exception(f'Opencv VideoCapture ret error: {ret}')
+            # bgr to rgb
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        except Exception as e:
+            log.error(f'{str(self)} read error: {e}')
 
-        if not ret or frame is None:
-            return None, timestamp_now()
-
-        # bgr to rgb
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return frame, timestamp_now()
 
     def close(self):

@@ -15,13 +15,12 @@ class Input:
         self.config = {**defaults, **config}
         atexit.register(self.close)
 
-
     def open(self):
         '''Initializes the camera.'''
-        log.warning(f'Open not implemented for {str(self)}.')
+        log.warning(f'Open not implemented for {str(self)}. There was most likely an error initializing this object.')
 
     def read(self):
-        log.warning(f'Read not implemented for {str(self)}.')
+        log.debug(f'Read not implemented for {str(self)}')
         return None, timestamp_now()
 
     def close(self):
