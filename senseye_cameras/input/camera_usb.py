@@ -24,6 +24,7 @@ class CameraUsb(Input):
         defaults = {
             'fps': 30,
             'codec': 'MJPG',
+            'use_dshow': 0,
         }
         Input.__init__(self, id=id, config=config, defaults=defaults)
 
@@ -49,7 +50,13 @@ class CameraUsb(Input):
 
 
     def open(self):
-        self.input = cv2.VideoCapture(self.id)
+        # If specified, enable DSHOW. This is required for some camera APIs,
+        # Specifically involved with choosing camera resolution
+        id = self.id
+        if self.config['use_dshow'] and type(id) is str:
+            id += cv2.CAP_DSHOW
+
+        self.input = cv2.VideoCapture(id)
 
         if not self.input.isOpened():
             log.warning(f'Video {self.id} failed to open. Video is corrupt, or an unreadable format.')
