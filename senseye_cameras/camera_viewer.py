@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import logging
 
 from senseye_utils import LoopThread, RapidEvents
@@ -49,8 +50,8 @@ class CameraViewer(LoopThread):
     def loop(self):
         if self.frame is not None:
             if self.focus:
-                gauss = cv.GaussianBlur(self.frame, (3, 3), 0)
-                laplace = cv2.Laplacian(gaussian,cv2.CV_64F).astype(np.uint8)
+                gaussian = cv2.GaussianBlur(self.frame, (3, 3), 0)
+                laplace = cv2.Laplacian(gaussian, cv2.CV_64F).astype(np.uint8)
                 cv2.imshow(f'focus_viewer:{self.camera_feed}', laplace)
 
             cv2.imshow(f'camera_viewer:{self.camera_feed}', self.frame)
