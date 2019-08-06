@@ -18,11 +18,10 @@ class StreamWrapper(Stream):
 
 if __name__ == '__main__':
     CAMERA_FEED='emergent_feed'
-
     camera_config={
         'res': (2048, 1088),
-        'fps': 318,
-        'exposure': 2919,
+        'fps': 150,
+        'exposure': 'max',
         'gain': 1024,
         'path':'wow.raw',
         'pix_fmt': 'gray',
@@ -44,5 +43,5 @@ if __name__ == '__main__':
     )
 
     pm.start()
-    time.sleep(50)
+    time.sleep(10)
     pm.stop()

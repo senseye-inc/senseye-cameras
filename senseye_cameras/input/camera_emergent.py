@@ -34,13 +34,27 @@ class CameraEmergent(Input):
         self.path = path
 
     def configure(self):
-        width = self.input.set_param('Width', self.config['res'][0])
-        height = self.input.set_param('Height', self.config['res'][1])
+        print(self.config)
+        width = self.set_prop('Width', self.config['res'][0])
+        height = self.set_prop('Height', self.config['res'][1])
         self.input.set_res(width * height)
         self.config['res'] = (width, height)
-        self.config['exposure'] = self.input.set_param('Exposure', self.config['exposure'])
-        self.config['fps'] = self.input.set_param('FrameRate', self.config['fps'])
-        self.config['gain'] = self.input.set_param('Gain', self.config['gain'])
+        self.set_prop('Exposure', self.get_prop('Exposure')['min']) # allows any fps to be set
+        self.config['fps'] = self.set_prop('FrameRate', self.config['fps'])
+        if self.config['exposure'] == 'max':
+            max = self.get_prop('Exposure')['max']
+            print(f'max exposure: {max}')
+            self.config['exposure'] = self.set_prop('Exposure', max)
+        else:
+            self.config['exposure'] = self.set_prop('Exposure', self.config['exposure'])
+        self.config['gain'] = self.set_prop('Gain', self.config['gain'])
+        self.config['max_width'] = self.get_prop('Width')['max']
+        self.config['max_height'] = self.get_prop('Height')['max']
+        self.config['max_offset_x'] = self.get_prop('OffsetX')['max']
+        self.config['max_offset_y'] = self.get_prop('OffsetY')['max']
+        # center AOI on sensor
+        self.config['offset_x'] = self.set_prop('OffsetX', self.config['max_offset_x']//2)
+        self.config['offset_y'] = self.set_prop('OffsetY', self.config['max_offset_y']//2)
 
     def set_path(self, path):
         self.path = path
@@ -56,12 +70,28 @@ class CameraEmergent(Input):
         self.writing = False
         if self.input:
             self.input.stop_writing()
+
     def start_reading(self):
         if self.input:
             self.input.start_reading()
+
     def stop_reading(self):
         if self.input:
             self.input.stop_reading()
+
+    def get_prop(self, name):
+        return {
+            'cur': self.input.get_uint_param(name),
+            'min': self.input.get_uint_param_min(name),
+            'max': self.input.get_uint_param_max(name),
+                }
+
+    def set_prop(self, name, value):
+        if type(value) is int:
+            return self.input.set_uint_param(name, value)
+        if type(value) is str:
+            return self.input.set_enum_param(name, value)
+        return f'Invalid Type. Cannot set type {type(value)}'
 
     def open(self):
         self.input = pyemergent.PyEmergent(config=self.config)
