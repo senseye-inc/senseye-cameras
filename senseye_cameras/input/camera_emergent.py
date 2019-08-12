@@ -34,7 +34,6 @@ class CameraEmergent(Input):
         self.path = path
 
     def configure(self):
-        print(self.config)
         width = self.set_prop('Width', self.config['res'][0])
         height = self.set_prop('Height', self.config['res'][1])
         self.input.set_res(width * height)
@@ -43,7 +42,6 @@ class CameraEmergent(Input):
         self.config['fps'] = self.set_prop('FrameRate', self.config['fps'])
         if self.config['exposure'] == 'max':
             max = self.get_prop('Exposure')['max']
-            print(f'max exposure: {max}')
             self.config['exposure'] = self.set_prop('Exposure', max)
         else:
             self.config['exposure'] = self.set_prop('Exposure', self.config['exposure'])
@@ -55,6 +53,7 @@ class CameraEmergent(Input):
         # center AOI on sensor
         self.config['offset_x'] = self.set_prop('OffsetX', self.config['max_offset_x']//2)
         self.config['offset_y'] = self.set_prop('OffsetY', self.config['max_offset_y']//2)
+        self.config['focus'] = self.set_prop('Focus', 0)
 
     def set_path(self, path):
         self.path = path
@@ -84,7 +83,7 @@ class CameraEmergent(Input):
             'cur': self.input.get_uint_param(name),
             'min': self.input.get_uint_param_min(name),
             'max': self.input.get_uint_param_max(name),
-                }
+        }
 
     def set_prop(self, name, value):
         if type(value) is int:
