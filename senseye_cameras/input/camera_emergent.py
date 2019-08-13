@@ -37,7 +37,9 @@ class CameraEmergent(Input):
         width = self.set_prop('Width', self.config['res'][0])
         height = self.set_prop('Height', self.config['res'][1])
         self.input.set_res(width * height)
-        self.config['res'] = (width, height)
+        self.input.set_binning(1);
+        self.input.set_decimation(3);
+        self.config['res'] = (width//self.input.get_scaling(), height//self.input.get_scaling())
         self.set_prop('Exposure', self.get_prop('Exposure')['min']) # allows any fps to be set
         self.config['fps'] = self.set_prop('FrameRate', self.config['fps'])
         if self.config['exposure'] == 'max':
