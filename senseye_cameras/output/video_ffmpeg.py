@@ -23,6 +23,7 @@ class VideoFfmpeg(Output):
             format (str): defaults to 'rawvideo'
             res (tuple)
     '''
+
     def __init__(self, path=None, config={}):
         defaults = {
             'fps': 30,
@@ -60,15 +61,15 @@ class VideoFfmpeg(Output):
         except Exception as e:
             log.error(f'Failed to initialize recorder: {self.path} with exception: {e}.')
 
-    def write(self, frame=None):
-        if frame is None:
+    def write(self, data=None):
+        if data is None:
             return
 
         if self.output is None:
-            self.initialize_recorder(frame=frame)
+            self.initialize_recorder(frame=data)
 
         try:
-            self.output.write(frame)
+            self.output.write(data)
         except: pass
 
     def close(self):

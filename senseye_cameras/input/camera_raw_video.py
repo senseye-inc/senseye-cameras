@@ -34,13 +34,17 @@ class CameraRawVideo(Input):
         '''
         frame = None
 
-        # Length of frame in bytes
-        frame_length = np.uint8().itemsize * np.product(self.config.get('res'))
-        frame_bytes = self.input.read(frame_length)
+        try:
+            # Length of frame in bytes
+            frame_length = np.uint8().itemsize * np.product(self.config.get('res'))
+            frame_bytes = self.input.read(frame_length)
 
-        buf = np.frombuffer(frame_bytes, dtype=np.uint8)
-        if buf.size != 0:
-            frame = buf.reshape(self.config.get('res'))
+            buf = np.frombuffer(frame_bytes, dtype=np.uint8)
+            if buf.size != 0:
+                frame = buf.reshape(self.config.get('res'))
+        except Exception as e:
+            log.error(f'{str(self)} read error: {e}')
+
         return frame, timestamp_now()
 
     def close(self):

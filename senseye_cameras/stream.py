@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 
 class Reader(LoopThread):
     '''Reads data into a queue.'''
+
     def __init__(self, q, on_read=None, type='usb', config={}, id=0, frequency=None):
         if frequency is None:
             frequency = config.get('fps', 100)
@@ -134,6 +135,15 @@ class Stream(LoopThread):
         '''Purges the reader queue.'''
         with self.q.mutex:
             self.q.queue.clear()
+
+    def set_prop(self, name=None, value=None):
+        if self.reader and self.reader.input:
+            self.reader.input.set_prop(name, value)
+
+    def get_prop(self, name=None):
+        if self.reader and self.reader.input:
+            return self.reader.input.get_prop(name)
+        return None
 
     ####################
     # WRITER FUNCTIONS
