@@ -42,6 +42,10 @@ class AudioPortInput(Input):
     def open(self):
         '''Opens Audio stream'''
         try:
+            if type(self.id) is str:
+                device_list = sd.query_devices()
+                self.id = [index for index, device_info in enumerate(device_list) if self.id in device_info['name']][0]
+
             self.configure()
             self.input = sd.InputStream(
                 device=self.id,
