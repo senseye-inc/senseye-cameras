@@ -1,5 +1,7 @@
 import time
 import atexit
+import shutil
+from pathlib import Path
 import logging
 from senseye_utils import LoopThread, SafeQueue
 
@@ -86,10 +88,13 @@ class Stream(LoopThread):
         input_frequency=None, output_frequency=None,
         reading=False, writing=False,
         on_read=None, on_write=None,
+        min_disk_space_bytes=-1,
     ):
         LoopThread.__init__(self, frequency=1)
 
         self.q = SafeQueue(700)
+
+        self.min_disk_space_bytes = min_disk_space_bytes
 
         self.input_type = input_type
         self.input_config = input_config
@@ -149,6 +154,12 @@ class Stream(LoopThread):
     # WRITER FUNCTIONS
     ####################
     def start_writing(self):
+        if self.min_disk_space_bytes > 0:
+            total, used, free = shutil.disk_usage(str(Path(self.path).parent.absolute()))
+            if free < self.min_disk_space_bytes:
+                log.critical(f'Stream not writing, free bytes {free} lower than min_disk_space_bytes {self.min_disk_space_bytes}')
+                return
+
         self.writing = True
         if self.writer is None:
             self.writer = Writer(self.q, on_write=self.on_write, type=self.output_type, config=self.output_config, path=self.path, frequency=self.output_frequency)
