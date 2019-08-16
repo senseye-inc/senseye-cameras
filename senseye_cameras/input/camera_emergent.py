@@ -53,9 +53,8 @@ class CameraEmergent(Input):
         self.config['max_offset_x'] = self.get_prop('OffsetX')['max']
         self.config['max_offset_y'] = self.get_prop('OffsetY')['max']
         # center AOI on sensor
-        self.config['offset_x'] = self.set_prop('OffsetX', self.config['max_offset_x']//2)
-        self.config['offset_y'] = self.set_prop('OffsetY', self.config['max_offset_y']//2)
-        self.config['focus'] = self.set_prop('Focus', 0)
+        self.config['offset_x'] = self.set_prop('OffsetX', self.config['max_offset_x']//2//16*16)
+        self.config['offset_y'] = self.set_prop('OffsetY', self.config['max_offset_y']//2//16*16)
 
     def set_path(self, path):
         self.path = path
