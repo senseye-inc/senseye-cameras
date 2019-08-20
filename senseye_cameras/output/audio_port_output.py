@@ -1,8 +1,5 @@
 import logging
-try:
-    import soundfile as sf
-except:
-    sf = None
+import soundfile as sf
 
 from . output import Output
 log = logging.getLogger(__name__)
@@ -44,9 +41,3 @@ class AudioPortOutput(Output):
             self.output.close()
             Output.close(self)
         self.output = None
-
-if sf is None:
-    class AudioPortOutput(Output):
-        def __init__(self, *args, **kargs):
-            Output.__init__(self)
-            log.error("SoundFile not found")

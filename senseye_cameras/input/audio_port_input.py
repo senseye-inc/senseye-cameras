@@ -1,8 +1,5 @@
 import logging
-try:
-    import sounddevice as sd
-except:
-    sd = None
+import sounddevice as sd
 
 from senseye_utils.date_utils import timestamp_now
 from . input import Input
@@ -72,10 +69,3 @@ class AudioPortInput(Input):
         if self.input:
             self.input.close()
         self.input = None
-
-# Fallback for no pylon
-if sd is None:
-    class AudioPortInput(Input):
-        def __init__(self, *args, **kargs):
-            Input.__init__(self)
-            log.error("SoundDevice not found")

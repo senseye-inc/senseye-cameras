@@ -26,6 +26,7 @@ setup(
 
         'numpy',
         'opencv-python',
-        f'senseye_utils >= {SENSEYE_UTILS_VERSION}',
+
+        f'senseye_utils @ git+ssh://git@bitbucket.org/senseyeinc/senseye_utils@v{SENSEYE_UTILS_VERSION}'
     ],
 )
