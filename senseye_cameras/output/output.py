@@ -18,10 +18,10 @@ class Output:
     '''
 
     def __init__(self, path=None, config={}, defaults={}):
+        self.output = None
         self.set_path(path=path)
         self.set_tmp_path(path=self.path)
 
-        self.output = None
         self.config = {**defaults, **config}
         atexit.register(self.close)
 

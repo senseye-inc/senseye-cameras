@@ -25,3 +25,18 @@ class VideoEmergent(Output):
 
     def __str__(self):
         return f'{self.__class__.__name__}'
+
+    def start_writing(self):
+        self.writing = True
+        if self.input:
+            self.input.start_writing() # allows any fps to be set
+
+    def stop_writing(self):
+        self.writing = False
+        if self.output:
+            self.output.stop_writing()
+
+    def set_path(self, path):
+        self.path = path
+        if self.output:
+            self.output.set_path(self.path)

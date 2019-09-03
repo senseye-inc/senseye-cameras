@@ -1,5 +1,9 @@
 import logging
-import sounddevice as sd
+
+try:
+    import sounddevice as sd
+except:
+    sd = None
 
 from senseye_utils.date_utils import timestamp_now
 from . input import Input
@@ -69,3 +73,8 @@ class AudioPortInput(Input):
         if self.input:
             self.input.close()
         self.input = None
+
+if sd is None:
+    class AudioPortInput(Input):
+        def __init__(self, id=0, config={}):
+            Input.__init__(self, id=id, config=config, defaults={})
