@@ -10,6 +10,19 @@ from . input import Input
 
 log = logging.getLogger(__name__)
 
+# writes the framenumber to the 8-11 bytes of the image as a big-endian set of octets
+def encode_framenumber(np_image, n):
+    for i in range(4):
+        np_image[0][i+7] = n & 0xFF
+        n>>=8
+
+# converts time from a float in seconds to an int64 in microseconds
+# writes the time to the first 7 bytes of the image as a big-endian set of octets
+def encode_timestamp(np_image, timestamp):
+    t = int(timestamp*1e6)
+    for i in range(7):
+        np_image[0][i] = t & 0xFF
+        t>>=8
 
 class CameraPylon(Input):
     '''
@@ -26,6 +39,7 @@ class CameraPylon(Input):
             'pfs': None,
         }
         Input.__init__(self, id=id, config=config, defaults=defaults)
+        self.read_count = 0
 
     def configure(self):
         '''
@@ -44,6 +58,7 @@ class CameraPylon(Input):
         self.config['fps'] = self.input.ResultingFrameRate.GetValue()
 
     def open(self):
+        self.read_count = 0
         # quick tips & tricks:
         # do not register the pylon camera with a software trigger - Mr. Brown
         # use OneByOne over LatestImageOnly to prevent frame loss - Mr. Brown
@@ -60,19 +75,24 @@ class CameraPylon(Input):
 
     def read(self):
         frame = None
-
+        now = None
         if self.input:
-            ret = self.input.RetrieveResult(100, pylon.TimeoutHandling_ThrowException)
             try:
+                ret = self.input.RetrieveResult(100, pylon.TimeoutHandling_ThrowException)
                 if ret.IsValid():
                     frame = ret.GetArray()
+                now = timestamp_now()
+                encode_timestamp(frame,now)
+                encode_framenumber(frame,self.read_count)
+                self.read_count+=1
             except TypeError as e:
                 log.error(f"{str(self)} read error: {e}")
             ret.Release()
-
-        return frame, timestamp_now()
+        if now is None: now = timestamp_now()
+        return frame, now
 
     def close(self):
+        self.read_count = 0
         if self.input and self.input.IsOpen():
             self.input.Close()
             self.input = None
