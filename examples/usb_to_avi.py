@@ -3,8 +3,8 @@ from resources import config
 from senseye_cameras import Stream
 
 s = Stream(
-    input_type='pylon', id=0,
-    output_type='raw', path='./tmp/usb.avi',
+    input_type='usb', id=0,
+    output_type='ffmpeg', path='./tmp/usb.avi',
     reading=True,
 )
 s.start()
