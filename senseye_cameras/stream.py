@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 class Reader(LoopThread):
     '''Reads data into a queue.'''
 
-    def __init__(self, q, on_read=None, type='usb', config={}, id=0, frequency=None):
+    def __init__(self, q, on_read=None, type='usb', config={}, id=0, frequency=None, reading=False):
         if frequency is None:
             frequency = config.get('fps', 100)
         LoopThread.__init__(self, frequency=frequency)
@@ -25,14 +25,16 @@ class Reader(LoopThread):
 
         self.input = create_input(type=type, config=config, id=id)
         self.input.open()
+        self.reading = reading
         log.info(f'Started {str(self.input)}. Config: {self.input.config}')
 
     def loop(self):
-        data, timestamp = self.input.read()
-        if data is not None:
-            if self.on_read is not None:
-                self.on_read(data=data, timestamp=timestamp)
-            self.q.put_nowait(data)
+        if self.reading:
+            data, timestamp = self.input.read()
+            if data is not None:
+                if self.on_read is not None:
+                    self.on_read(data=data, timestamp=timestamp)
+                self.q.put_nowait(data)
 
     def on_stop(self):
         self.input.close()
@@ -107,14 +109,19 @@ class Stream(LoopThread):
         self.input_frequency = input_frequency
         self.output_frequency = output_frequency
 
-        self.reading = reading
-        self.writing = writing
-
         self.on_read = on_read
         self.on_write = on_write
 
         self.writer = self.reader = None
         atexit.register(self.stop)
+
+        self.reader = Reader(self.q, on_read=self.on_read, type=self.input_type, config=self.input_config, id=self.id, frequency=self.input_frequency)
+        self.reader.start()
+
+        if reading:
+            self.start_reading()
+        if writing:
+            self.start_writing()
 
     def set_path(self, path=None):
         self.path = path
@@ -125,16 +132,10 @@ class Stream(LoopThread):
     # READER FUNCTIONS
     ####################
     def start_reading(self):
-        self.reading = True
-        if self.reader is None:
-            self.reader = Reader(self.q, on_read=self.on_read, type=self.input_type, config=self.input_config, id=self.id, frequency=self.input_frequency)
-            self.reader.start()
+        self.reader.reading = True
 
     def stop_reading(self):
-        if self.reader:
-            self.reader.stop()
-            self.reader = None
-        self.reading = False
+        self.reader.reading = False
 
     def refresh_q(self):
         '''Purges the reader queue.'''
@@ -160,7 +161,6 @@ class Stream(LoopThread):
                 log.critical(f'Stream not writing, free bytes {free} lower than min_disk_space_bytes {self.min_disk_space_bytes}')
                 return
 
-        self.writing = True
         if self.writer is None:
             self.writer = Writer(self.q, on_write=self.on_write, type=self.output_type, config=self.output_config, path=self.path, frequency=self.output_frequency)
 
@@ -179,22 +179,10 @@ class Stream(LoopThread):
         if self.writer:
             self.writer.stop()
             self.writer = None
-        self.writing = False
 
     ####################
     # LOOPTHREAD FUNCTIONS
     ####################
     def on_stop(self):
-        if self.reading:
-            self.stop_reading()
-        if self.writing:
-            self.stop_writing()
-
-    def on_start(self):
-        if self.reading:
-            self.start_reading()
-        if self.writing:
-            self.start_writing()
-
-    def loop(self):
-        pass
+        self.stop_reading()
+        self.stop_writing()
