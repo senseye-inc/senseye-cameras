@@ -5,7 +5,7 @@ with open('.version', 'r') as f:
     VERSION = f.read()
 
 PYEMERGENT_VERSION='0.1.4'
-SENSEYE_UTILS_VERSION='0.9.5'
+SENSEYE_UTILS_VERSION='0.9.6'
 
 setup(
     name='senseye_cameras',
@@ -26,6 +26,7 @@ setup(
 
         'numpy',
         'opencv-python',
+
         f'senseye_utils >= {SENSEYE_UTILS_VERSION}',
     ],
 )

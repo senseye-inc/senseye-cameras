@@ -1,4 +1,5 @@
 import logging
+
 try:
     import soundfile as sf
 except:
@@ -47,6 +48,5 @@ class AudioPortOutput(Output):
 
 if sf is None:
     class AudioPortOutput(Output):
-        def __init__(self, *args, **kargs):
-            Output.__init__(self)
-            log.error("SoundFile not found")
+        def __init__(self, path=None, config={}):
+            Output.__init__(self, path=path, config=config, defaults={})

@@ -42,6 +42,7 @@ class VideoFfmpeg(Output):
         codec_lookup = {
             '.avi': 'huffyuv',
             '.mp4': 'libx264 -crf 0 -preset ultrafast',
+            '.mkv': 'h264 -crf 23 -preset ultrafast'
         }
 
         suffix = Path(self.path).suffix

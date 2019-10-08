@@ -1,4 +1,5 @@
 import logging
+
 try:
     import sounddevice as sd
 except:
@@ -42,6 +43,10 @@ class AudioPortInput(Input):
     def open(self):
         '''Opens Audio stream'''
         try:
+            if type(self.id) is str:
+                device_list = sd.query_devices()
+                self.id = [index for index, device_info in enumerate(device_list) if self.id in device_info['name']][0]
+
             self.configure()
             self.input = sd.InputStream(
                 device=self.id,
@@ -69,9 +74,7 @@ class AudioPortInput(Input):
             self.input.close()
         self.input = None
 
-# Fallback for no pylon
 if sd is None:
     class AudioPortInput(Input):
-        def __init__(self, *args, **kargs):
-            Input.__init__(self)
-            log.error("SoundDevice not found")
+        def __init__(self, id=0, config={}):
+            Input.__init__(self, id=id, config=config, defaults={})
