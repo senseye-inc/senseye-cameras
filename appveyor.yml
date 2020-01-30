@@ -1,4 +1,4 @@
 image: Ubuntu
 
-test:
+test_script:
 - sh: echo "hi"
