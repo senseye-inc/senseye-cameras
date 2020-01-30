@@ -4,7 +4,7 @@ setup(
     name='senseye_cameras',
     description='Senseye Camera Utilities',
     author='Senseye Inc',
-    version='0.1.0',
+    version='1.0.0',
     packages=[
         'senseye_cameras',
         'senseye_cameras.input',
