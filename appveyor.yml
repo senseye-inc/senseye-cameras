@@ -1,0 +1,4 @@
+image: Ubuntu
+
+test:
+- sh: echo "hi"
