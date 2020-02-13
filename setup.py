@@ -8,7 +8,7 @@ setup(
     name='senseye_cameras',
     description='Senseye Camera Utilities',
     author='Senseye Inc',
-    version='1.0.1',
+    version='1.0.2',
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=[
@@ -22,6 +22,8 @@ setup(
 
         'numpy',
         'opencv-python',
-        'pyueye==0.1.0; platform_system=="Windows"',
+        'ffmpeg-python',
+        'pyueye @ git+https://git@github.com/senseyeinc/senseye-pyueye@master',
+
     ],
 )

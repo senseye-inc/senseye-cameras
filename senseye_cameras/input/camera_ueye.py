@@ -1,7 +1,10 @@
 import time
 import logging
 import numpy as np
-from pyueye import ueye
+try:
+    from pyueye import ueye
+except:
+    ueye = None
 
 from . input import Input
 
@@ -86,7 +89,6 @@ class CameraUeye(Input):
             self.mem_id
             self.mem_image
         '''
-        # Allocates an image memory for an image having its dimensions defined by width and height and its color depth defined by nBitsPerPixel
         mem_id = ueye.int()
         mem_image = ueye.c_mem_p()
         nRet = ueye.is_AllocImageMem(self.input, self.width, self.height, self.bits_per_pixel, mem_image, mem_id)
@@ -127,7 +129,7 @@ class CameraUeye(Input):
         pixel_clock_range = (ueye.c_uint * 3)()
         ret = ueye.is_PixelClock(self.input, ueye.IS_PIXELCLOCK_CMD_GET_RANGE, pixel_clock_range, 3 * ueye.sizeof(ueye.UINT()))
         log.info(f'pixel_clock max: {pixel_clock_range[0]}, pixel_clock min: {pixel_clock_range[1]}, ret val: {ret}')
-        # max out pixel clock
+        # set max pixel clock
         pixel_clock = ueye.c_int(pixel_clock_range[1])
         ret = ueye.is_PixelClock(self.input, ueye.IS_PIXELCLOCK_CMD_SET, pixel_clock, ueye.sizeof(pixel_clock))
         self.config['pixel_clock'] = pixel_clock.value
@@ -176,3 +178,9 @@ class CameraUeye(Input):
     def close(self):
         ueye.is_FreeImageMem(self.input, self.mem_image, self.mem_id)
         ueye.is_ExitCamera(self.input)
+
+if ueye is None:
+    class CameraUeye(Input):
+        def __init__(self, *args, **kargs):
+            Input.__init__(self)
+            log.error("Ueye not found")
