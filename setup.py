@@ -22,6 +22,8 @@ setup(
 
         'numpy',
         'opencv-python',
-        'pyueye==0.1.0; platform_system=="Windows"',
+        'ffmpeg-python',
+        'pyueye @ git+https://git@github.com/senseyeinc/senseye-pyueye@master',
+
     ],
 )
