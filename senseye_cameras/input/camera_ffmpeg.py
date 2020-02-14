@@ -12,12 +12,22 @@ log = logging.getLogger(__name__)
 class CameraFfmpeg(Input):
     '''
     Opens a camera using ffmpeg.
+    Args:
+        id (int/str): id of the ffmpeg camera
+        config (dict): Configuration dictionary. Accepted keywords:
+            fps (int): framerate of the camera
+            res (tuple): resolution in the format (width, height, channels)
+            block_size (int): how many bytes to read from the camera if the camera outputs a stream of bytes.
+
+            pixel_format (str): pixel format of the camera (eg: bgr24, uyvy422)
+            output_format (str): desired ffmpeg output format of the camera (eg: rawvideo, h264)
     '''
 
     def __init__(self, id=0, config={}):
         defaults = {
             'fps': 30,
             'res': (1280, 720, 3),
+            'block_size': 16384,
 
             # pixel format of the camera
             'pixel_format': 'uyvy422',
@@ -69,10 +79,13 @@ class CameraFfmpeg(Input):
                 frame_size = np.prod(np.array(self.config.get('res')))
                 frame_bytes = self.input.read(frame_size)
                 frame_str = np.fromstring(frame_bytes, dtype='uint8')
-                frame = frame_str.reshape((self.config.get('res')[1], self.config.get('res')[0], self.config.get('res')[2]))
+                if len(self.config.get('res')) == 3:
+                    frame = frame_str.reshape((self.config.get('res')[1], self.config.get('res')[0], self.config.get('res')[2]))
+                else:
+                    frame = frame_str.reshape((self.config.get('res')[1], self.config.get('res')[0]))
             else:
                 # directly read in bytes otherwise
-                frame = self.input.read(8192)
+                frame = self.input.read(self.config.get('block_size'))
         except Exception as e:
             log.error(f"Ffmpeg camera error: {e}")
 
