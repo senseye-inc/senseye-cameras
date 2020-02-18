@@ -71,15 +71,13 @@ Using Outputs
 
 Output objects put data into a file. They can be created by using the :py:meth:`create_output <senseye_cameras.output.output_factory.create_output>` function.
 
-All Outputs support the :py:meth:`write <senseye_cameras.output.output.Output.write>`, :py:meth:`close <senseye_cameras.output.output.Output.close>`, and :py:meth:`set_path <senseye_cameras.output.output.Output.set_path>` functions.
-
-The **set_path** function takes in a path and tells the Output object where to write data to.
+All Outputs support the :py:meth:`write <senseye_cameras.output.output.Output.write>` and :py:meth:`close <senseye_cameras.output.output.Output.close>` functions.
 
 The **write** function writes data, typically in the form of numpy arrays, to the Output object.
 
 The **close** function gracefully closes the Output object.
 
-Here's a simple example that creates and writes to a raw Output object.
+Here's a simple example that creates and writes to a file Output object.
 
 .. literalinclude:: ../../examples/output/create_file_output.py
     :language: python
@@ -92,9 +90,9 @@ Streams
 
 The :py:meth:`Stream <senseye_cameras.stream>` module is a high level module that links a single Input and Output.
 
-Here's a simple example that creates a stream that uses a usb camera and writes to an avi file:
+Here's a simple example that creates a stream that opens a usb camera and writes frames to a file:
 
-.. literalinclude:: ../../examples/stream/usb_to_avi.py
+.. literalinclude:: ../../examples/stream/usb_to_file.py
     :language: python
 
 More examples can be found in the senseye_cameras/examples/stream folder.
