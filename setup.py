@@ -8,7 +8,7 @@ setup(
     name='senseye_cameras',
     description='Senseye Camera Utilities',
     author='Senseye Inc',
-    version='1.0.3',
+    version='1.0.4',
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=[
@@ -17,9 +17,6 @@ setup(
         'senseye_cameras.output',
     ],
     install_requires=[
-        'sounddevice',
-        'soundfile',
-
         'numpy',
         'opencv-python',
         'ffmpeg-python',
