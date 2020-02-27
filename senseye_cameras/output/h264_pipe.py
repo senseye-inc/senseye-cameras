@@ -69,6 +69,4 @@ class H264Pipe(Output):
         self.decoder.stdin.write(data.tostring())
 
     def close(self):
-        if self.decoder:
-            self.decoder.stdin.close()
-            self.decoder = None
+        self.decoder = None
