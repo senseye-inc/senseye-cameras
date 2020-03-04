@@ -28,7 +28,8 @@ class File(Output):
     def __init__(self, path=None, **kwargs):
         defaults = {
             'fps': 30,
-            'pixel_format': 'rawvideo',
+            'format': 'rawvideo',
+            'pixel_format': 'rgb24',
             'output_pixel_format': 'rgb24',
             'file_codec': {},
             'res': (1280, 720)
