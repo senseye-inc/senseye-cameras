@@ -4,7 +4,6 @@ from utils import SAMPLE_VIDEO, get_tmp_file, rm_tmp_dir
 from senseye_cameras import Stream
 
 
-
 def test_stream_video_override():
     '''Ensure that streams do not override video files.'''
     TMP_FILE = get_tmp_file(extension='.raw')
