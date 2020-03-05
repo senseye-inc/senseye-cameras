@@ -35,9 +35,13 @@ class CameraPylon(Input):
     '''
 
     def __init__(self, id=0, config={}):
+        if pylon is None:
+            raise ImportError('Pylon failed to import. Pylon camera initialization failed.')
+
         defaults = {
             'pfs': None,
             'encode_metadata': False,
+            'format': 'rawvideo',
         }
         Input.__init__(self, id=id, config=config, defaults=defaults)
         self.read_count = 0
@@ -62,16 +66,13 @@ class CameraPylon(Input):
 
     def open(self):
         self.read_count = 0
-        try:
-            devices = pylon.TlFactory.GetInstance().EnumerateDevices()
-            self.input = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateDevice(devices[self.id]))
-            self.input.Open()
-            self.configure()
+        devices = pylon.TlFactory.GetInstance().EnumerateDevices()
+        self.input = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateDevice(devices[self.id]))
+        self.input.Open()
+        self.configure()
 
-            self.input.StopGrabbing()
-            self.input.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
-        except Exception as e:
-            log.error(f'{str(self)} open error: {e}')
+        self.input.StopGrabbing()
+        self.input.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
 
     def read(self):
         frame = None
@@ -96,9 +97,3 @@ class CameraPylon(Input):
         if self.input and self.input.IsOpen():
             self.input.Close()
             self.input = None
-
-if pylon is None:
-    class PylonCamera(Input):
-        def __init__(self, *args, **kargs):
-            Input.__init__(self)
-            log.error("PyPylon not found")
