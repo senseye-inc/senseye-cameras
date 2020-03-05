@@ -7,7 +7,7 @@ CAMERA_ID = 0
 log = logging.getLogger(__name__)
 
 
-def test_pylon_camera_read():
+def test_read():
     '''
     Test reading from an pylon camera.
     cam.open() will only run successfully if:

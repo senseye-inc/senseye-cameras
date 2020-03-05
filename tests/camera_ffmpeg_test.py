@@ -1,8 +1,7 @@
 import os
 import time
 import logging
-import shutil
-from utils import TMP_DIR, get_tmp_file
+from utils import get_tmp_file, rm_tmp_dir
 from senseye_cameras import create_input, Stream
 
 CAMERA_TYPE = 'ffmpeg'
@@ -11,7 +10,7 @@ CAMERA_ID = 0
 log = logging.getLogger(__name__)
 
 
-def test_ffmpeg_camera_read():
+def test_read():
     '''
     Test reading from an ffmpeg camera.
     cam.open() will only run successfully if:
@@ -32,7 +31,10 @@ def test_ffmpeg_camera_read():
 
     cam.close()
 
-def test_ffmpeg_stream():
+def test_stream():
+    '''
+    Test an ffmeg stream: ffmpeg -> file
+    '''
     try:
         s = Stream(
             input_type='ffmpeg', id=0,
@@ -43,11 +45,9 @@ def test_ffmpeg_stream():
         log.warning(f'Test could not be run, stream initialization failed with error: {e}. This is most likely a hardware issue.')
         return
 
-    s.start()
-
     time.sleep(2)
 
     s.stop()
 
     assert os.stat(get_tmp_file()).st_size > 0
-    shutil.rmtree(TMP_DIR)
+    rm_tmp_dir()

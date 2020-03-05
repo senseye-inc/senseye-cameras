@@ -1,9 +1,7 @@
 import os
 import time
 import pytest
-import shutil
-from pathlib import Path
-from utils import TMP_DIR, get_tmp_file, SAMPLE_VIDEO
+from utils import get_tmp_file, SAMPLE_VIDEO, rm_tmp_dir
 
 from senseye_cameras import Stream
 
@@ -23,7 +21,7 @@ def stream_with_extension(extension):
     s.stop()
 
     assert os.stat(tmp_path).st_size > 0
-    shutil.rmtree(TMP_DIR)
+    rm_tmp_dir()
 
 
 @pytest.mark.parametrize('extension', ['.avi', '.mp4', '.mkv', '.yuv', '.raw'])
