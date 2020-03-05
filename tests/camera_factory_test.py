@@ -1,7 +1,5 @@
 from senseye_cameras import create_input
-
-USB_VIDEO = './tests/resources/usb_video.mp4'
-RAW_VIDEO = './tests/resources/raw_video.raw'
+from utils import SAMPLE_RAW_VIDEO, SAMPLE_VIDEO
 
 def try_camera(type, id):
     '''Tries to open and read from a camera.'''
@@ -15,7 +13,7 @@ def try_camera(type, id):
     assert cam.input is None
 
 def test_create_usb_camera():
-    try_camera('usb', USB_VIDEO)
+    try_camera('usb', SAMPLE_VIDEO)
 
 def test_create_raw_camera():
-    try_camera('raw_video', RAW_VIDEO)
+    try_camera('raw_video', SAMPLE_RAW_VIDEO)
