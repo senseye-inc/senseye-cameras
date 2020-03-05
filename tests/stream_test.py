@@ -6,8 +6,8 @@ from senseye_cameras import Stream
 
 
 def test_stream_video_override():
-    TMP_FILE = get_tmp_file(extension='.raw')
     '''Ensure that streams do not override video files.'''
+    TMP_FILE = get_tmp_file(extension='.raw')
     s = Stream(
         input_type='usb', id=SAMPLE_VIDEO, input_config={'fps': 10},
         output_type='raw', path=TMP_FILE,

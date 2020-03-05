@@ -4,9 +4,6 @@ import logging
 from utils import get_tmp_file, rm_tmp_dir
 from senseye_cameras import create_input, Stream
 
-CAMERA_TYPE = 'ffmpeg'
-CAMERA_ID = 0
-
 log = logging.getLogger(__name__)
 
 
@@ -20,7 +17,7 @@ def test_read():
     '''
     cam = None
     try:
-        cam = create_input(type=CAMERA_TYPE, id=CAMERA_ID)
+        cam = create_input(type='ffmpeg', id=0)
         cam.open()
     except Exception as e:
         log.warning(f'Test could not be run, camera open failed with error: {e}. This is most likely a hardware issue.')
@@ -30,6 +27,7 @@ def test_read():
     assert frame is not None
 
     cam.close()
+
 
 def test_stream():
     '''

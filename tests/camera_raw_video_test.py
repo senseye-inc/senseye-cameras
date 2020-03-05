@@ -21,6 +21,7 @@ def test_read():
 
     cam.close()
 
+
 def test_stream():
     '''
     Test an usb stream: usb -> file
