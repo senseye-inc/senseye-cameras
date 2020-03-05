@@ -1,3 +1,7 @@
+'''
+senseye-cameras bakes in frame_count/timestamp into raw pylon frames.
+these are helper functions that show how to retrieve them.
+'''
 # expects a raw video created by CameraPylon, checks that the timestamps and frame numbers are sane
 
 from pathlib import Path

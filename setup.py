@@ -22,6 +22,9 @@ setup(
         'ffmpeg-python',
         'senseye-pyueye',
     ],
+    extras_require={
+        'test': ['pytest'],
+    },
     project_urls={
         "Download": "https://github.com/senseyeinc/senseye-cameras/releases",
         "Source Code": "https://github.com/senseyeinc/senseye-cameras",

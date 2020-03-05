@@ -61,7 +61,14 @@ class CameraFfmpeg(Input):
             .global_args('-an')
             .run_async(pipe_stdout=True)
         )
-        log.info(f'Running command: {" ".join(self.process.args)}')
+
+        # give the process time to start up
+        time.sleep(0.1)
+
+        return_code = self.process.poll()
+        if return_code is not None:
+            raise Exception(f'Failed to open ffmpeg camera {self.id}. Ffmpeg process exited with return code: {return_code} ')
+
         self.input = self.process.stdout
 
     def read(self):
@@ -90,7 +97,6 @@ class CameraFfmpeg(Input):
 
     def close(self):
         if self.process:
-            self.process.stdout.close()
-            self.process.wait()
+            self.process.kill()
         self.process = None
         self.input = None

@@ -1,7 +1,6 @@
 import time
 import atexit
 import logging
-from . loop_thread import LoopThread
 from . safe_queue import SafeQueue
 
 from . reader import Reader
@@ -10,7 +9,7 @@ from . writer import Writer
 log = logging.getLogger(__name__)
 
 
-class Stream(LoopThread):
+class Stream:
     '''
     Links an Input with an Output.
     Args:
@@ -28,8 +27,6 @@ class Stream(LoopThread):
         reading=False, writing=False,
         on_read=None, on_write=None,
     ):
-        LoopThread.__init__(self, frequency=1)
-
         self.q = SafeQueue(700)
 
         self.input_type = input_type
@@ -105,11 +102,14 @@ class Stream(LoopThread):
     ####################
     # LOOPTHREAD FUNCTIONS
     ####################
-    def on_stop(self):
+    def stop(self):
         self.stop_reading()
         self.stop_writing()
         self.reader.stop()
         self.writer.stop()
+
+    def start(self):
+        pass
 
     def __str__(self):
         return f'{self.__class__.__name__}'

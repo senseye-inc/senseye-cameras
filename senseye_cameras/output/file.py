@@ -35,13 +35,15 @@ class File(Output):
         }
         Output.__init__(self, defaults=defaults, **kwargs)
 
+        self.process = None
+
         self.set_path(path=path)
         self.set_tmp_path(path=self.path)
 
-        self.generate_file_codec()
         if Path(self.path).suffix == '.raw':
             self.output = open(self.tmp_path, 'bw')
         else:
+            self.generate_file_codec()
             self.initialize_ffmpeg()
 
     def generate_file_codec(self):
@@ -54,7 +56,9 @@ class File(Output):
         }
 
         suffix = Path(self.path).suffix
-        self.config['file_codec'] = codec_lookup.get(suffix, codec_lookup['.yuv'])
+        self.config['file_codec'] = codec_lookup.get(suffix, None)
+        if self.config['file_codec'] is None:
+            raise Exception(f'File extension {suffix} not supported.')
 
     def initialize_ffmpeg(self):
         '''Initializes ffmpeg.'''
@@ -110,8 +114,8 @@ class File(Output):
             self.output.close()
 
             if self.process and self.process.poll() == None:
-                self.process.communicate()
-                
+                self.process.kill()
+
             try:
                 # make the stream reusable by creating a new tmp path
                 old_tmp_path = self.tmp_path
