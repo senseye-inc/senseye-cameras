@@ -35,6 +35,8 @@ class File(Output):
         }
         Output.__init__(self, defaults=defaults, **kwargs)
 
+        self.process = None
+
         self.set_path(path=path)
         self.set_tmp_path(path=self.path)
 
@@ -111,7 +113,7 @@ class File(Output):
 
             if self.process and self.process.poll() == None:
                 self.process.communicate()
-                
+
             try:
                 # make the stream reusable by creating a new tmp path
                 old_tmp_path = self.tmp_path

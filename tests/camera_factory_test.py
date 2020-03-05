@@ -1,5 +1,3 @@
-import nose.tools as nt
-
 from senseye_cameras import create_input
 
 USB_VIDEO = './tests/resources/usb_video.mp4'
@@ -11,10 +9,10 @@ def try_camera(type, id):
     cam.open()
 
     frame, timestamp = cam.read()
-    nt.assert_is_not_none(frame)
+    assert frame is not None
 
     cam.close()
-    nt.assert_is_none(cam.input)
+    assert cam.input is None
 
 def test_create_usb_camera():
     try_camera('usb', USB_VIDEO)

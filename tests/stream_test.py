@@ -1,7 +1,6 @@
 import os
 import time
 import shutil
-import nose.tools as nt
 
 from senseye_cameras import Stream
 
@@ -24,8 +23,8 @@ def test_stream_raw_video():
 
     s.stop()
 
-    nt.assert_greater(os.stat(TMP_VIDEO).st_size, 0)
-    nt.assert_equal(os.stat(TMP_VIDEO).st_size, os.stat(RAW_VIDEO).st_size)
+    assert os.stat(TMP_VIDEO).st_size > 0
+    assert os.stat(TMP_VIDEO).st_size == os.stat(RAW_VIDEO).st_size
     shutil.rmtree(TMP_DIR)
 
 def test_stream_usb_video():
@@ -40,7 +39,7 @@ def test_stream_usb_video():
 
     s.stop()
 
-    nt.assert_greater(os.stat(TMP_VIDEO).st_size, 0)
+    assert os.stat(TMP_VIDEO).st_size > 0
     shutil.rmtree(TMP_DIR)
 
 def test_stream_video_override():
@@ -69,6 +68,6 @@ def test_stream_video_override():
 
     s.stop()
 
-    nt.assert_greater(os.stat(TMP_VIDEO).st_size, 0)
-    nt.assert_greater(os.stat(tmp_path).st_size, 0)
+    assert os.stat(TMP_VIDEO).st_size > 0
+    assert os.stat(tmp_path).st_size > 0
     shutil.rmtree(TMP_DIR)
