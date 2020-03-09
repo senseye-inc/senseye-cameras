@@ -99,20 +99,11 @@ class Stream:
         self.reader.writing = False
         log.info(f'{str(self)} writing stopped - {time.time()}')
 
-    ####################
-    # LOOPTHREAD FUNCTIONS
-    ####################
     def stop(self):
         self.stop_reading()
         self.stop_writing()
         self.reader.stop()
         self.writer.stop()
-
-    def start(self):
-        pass
-
-    def run(self):
-        pass
 
     def __str__(self):
         return f'{self.__class__.__name__}'
