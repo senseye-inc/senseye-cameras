@@ -12,8 +12,6 @@ def test_stream_video_override():
         output_type='raw', path=TMP_FILE,
         reading=False, writing=False,
     )
-    s.start()
-
     s.start_reading()
     s.start_writing()
     time.sleep(2)

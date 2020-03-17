@@ -11,11 +11,9 @@ def stream_with_extension(extension):
 
     s = Stream(
         input_type='usb', id=SAMPLE_VIDEO,
-        output_type='raw', path=tmp_path,
+        output_type='file', path=tmp_path,
         reading=True, writing=True,
     )
-    s.start()
-
     time.sleep(2)
 
     s.stop()
