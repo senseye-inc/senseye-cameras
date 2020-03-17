@@ -11,13 +11,19 @@ Camera Support
 senseye_cameras supports these inputs:
 
 usb cameras
+
 compressed video files
+
 raw video files
-usb microphones
+
 basler pylon cameras
-    pylon and pypylon must be installed: https://github.com/Basler/pypylon/releases
+    the pylon SDK and pypylon python package must be installed.
+    SDK: https://www.baslerweb.com/en/sales-support/downloads/software-downloads/pylon-5-0-12-windows/
+    pypylon: https://github.com/Basler/pypylon/releases
+
 ids ueye cameras
-    the ueye sdk can be installed here: https://en.ids-imaging.com/download-ueye-win64.html
+    the ueye SDK must be installed.
+    SDK: https://en.ids-imaging.com/download-ueye-win64.html
 
 
 Modules
