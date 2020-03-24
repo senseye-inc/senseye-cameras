@@ -20,8 +20,6 @@ s = Stream(
 
     reading=True,
 )
-s.start()
-
 time.sleep(2)
 
 s.start_writing()

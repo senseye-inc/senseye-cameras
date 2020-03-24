@@ -33,8 +33,6 @@ s = Stream(
     reading=True,
     writing=False,
 )
-s.start()
-
 time.sleep(1)
 
 # since the writing kwarg passed to the stream was False, we must manually start the stream

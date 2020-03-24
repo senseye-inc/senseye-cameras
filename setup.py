@@ -20,7 +20,7 @@ setup(
         'numpy',
         'opencv-python',
         'ffmpeg-python',
-        'senseye-pyueye',
+        'senseye-pyueye>=0.2.0',
     ],
     extras_require={
         'test': ['pytest'],

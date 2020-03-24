@@ -12,8 +12,6 @@ s = Stream(
     reading=True,
     writing=True,
 )
-s.start()
-
 time.sleep(10)
 
 s.stop()
