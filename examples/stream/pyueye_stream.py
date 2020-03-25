@@ -21,8 +21,8 @@ s = Stream(
         'exposure': 60,
         'autofocus': 1,
         'autogain': 1,
-        'focus_min': 100,
-        'focus_max': 200,
+        'focus_min': 780,
+        'focus_max': 900,
     },
     on_read=on_frame_read,
 
