@@ -33,6 +33,8 @@ class CameraFfmpeg(Input):
         }
         Input.__init__(self, id=id, config=config, defaults=defaults)
 
+        self.process = None
+
     def get_format(self):
         '''Get os specific format.'''
         if 'linux' in sys.platform:

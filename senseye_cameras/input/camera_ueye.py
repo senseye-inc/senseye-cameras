@@ -1,4 +1,5 @@
 import time
+import random
 import logging
 import numpy as np
 try:
@@ -22,6 +23,12 @@ class CameraUeye(Input):
             exposure (str): desired exposure
             autofocus (bool): whether to enable autofocus
             autogain (bool): whether to enable autogain
+
+            focus_min (int): autofocus lower bound
+            focus_max (int): autofocus upper bound
+
+            focus for 10 inches is ~780
+            focus for 20 inches is ~900
     '''
 
     def __init__(self, id=0, config={}):
@@ -31,9 +38,11 @@ class CameraUeye(Input):
         defaults = {
             'fps': 60,
             'exposure': 60,
-            'autofocus': True,
-            'autogain': True,
+            'autofocus': 1,
+            'autogain': 1,
             'format': 'rawvideo',
+            'focus_min': None,
+            'focus_max': None,
         }
         Input.__init__(self, id=id, config=config, defaults=defaults)
 
@@ -154,20 +163,39 @@ class CameraUeye(Input):
         self.config['exposure'] = actual_exposure.value
         log.info(f'Attempted to set exposure to {target_exposure}, ret value: {ret}, actual frame rate: {actual_exposure}')
 
+        # set autofocus limits
+        if self.config.get('focus_min') is not None and self.config.get('focus_max') is not None:
+            limit = ueye.AUTOFOCUS_LIMIT()
+            limit.sMin = ueye.c_int(self.config['focus_min'])
+            limit.sMax = ueye.c_int(self.config['focus_max'])
+            ret = ueye.is_Focus(self.input, ueye.FOC_CMD_SET_AUTOFOCUS_LIMIT, limit, ueye.sizeof(limit));
+            if ret == ueye.IS_SUCCESS:
+                log.info(f'Successfully set focus min: {self.config["focus_min"]}, focus max: {self.config["focus_max"]}')
+            else:
+                log.error('Failed to set focus min/max.')
+
         # enable autofocus
         if self.config.get('autofocus'):
             ret = ueye.is_Focus(self.input, ueye.FOC_CMD_SET_ENABLE_AUTOFOCUS, None, 0)
+            if ret == ueye.IS_SUCCESS:
+                log.info(f'Successfully set autofocus to {self.config.get("autofocus")}.')
+            else:
+                log.error('Failed to set autofocus.')
 
         # enable autogain
         if self.config.get('autogain'):
             ret = ueye.is_SetAutoParameter(self.input, ueye.IS_SET_ENABLE_AUTO_GAIN, ueye.double(1), ueye.double(0))
+            if ret == ueye.IS_SUCCESS:
+                log.info(f'Successfully set autogain to {self.config.get("autogain")}.')
+            else:
+                log.error('Failed to set autogain.')
+
 
     def open(self):
         '''Opens and initializes ueye camera.'''
         # initialize camera
         if(ueye.is_InitCamera(self.input, None) != ueye.IS_SUCCESS):
             log.error("is_InitCamera ERROR")
-
         self.initialize_color_mode()
         self.initialize_dimensions()
         self.initialize_memory()

@@ -20,8 +20,6 @@ def ffmpeg_to_raw_video():
         reading=True,
         writing=True,
     )
-    s.start()
-
     time.sleep(WRITE_TIME)
 
     s.stop()
@@ -38,8 +36,6 @@ def ffmpeg_to_compressed_video():
         reading=True,
         writing=True,
     )
-    s.start()
-
     time.sleep(WRITE_TIME)
 
     s.stop()
@@ -55,8 +51,6 @@ def ffmpeg_to_h264_to_raw():
         reading=True,
         writing=True,
     )
-    s.start()
-
     time.sleep(WRITE_TIME)
 
     s.stop()

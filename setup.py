@@ -8,7 +8,7 @@ setup(
     name='senseye-cameras',
     description='Senseye Camera Utilities',
     author='Senseye Inc',
-    version='1.0.7',
+    version='1.0.8',
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=[
@@ -20,7 +20,7 @@ setup(
         'numpy',
         'opencv-python',
         'ffmpeg-python',
-        'senseye-pyueye',
+        'senseye-pyueye>=0.2.0',
     ],
     extras_require={
         'test': ['pytest'],

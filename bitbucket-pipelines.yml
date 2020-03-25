@@ -1,9 +1,36 @@
-image: python:3.6.5
+image:
+  name: senseyeinc/python-base:3.6-ffmpeg
+  username: $DOCKER_HUB_UNAME
+  password: $DOCKER_HUB_PWORD
 
 pipelines:
   default:
     - step:
+        services:
+            - redis
+        script: # Modify the commands below to build your repository
+            - pip install nose pytest
+            - pip install . --extra-index-url=http://senseye:Three33@pypi.senseye.co --trusted-host=pypi.senseye.co
+            - pytest
+            - pip freeze > requirements.txt
+        artifacts:
+            - requirements.txt
+
+    - step:
+        name: Fossa integration
         script:
-          - pip install nose
-          - pip install .
-          - nosetests
+          - curl -H 'Cache-Control:no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash
+          # (commit to bitbucket instead of using in pipeline)
+          - fossa init
+          - FOSSA_API_KEY=$FOSSA_KEY fossa analyze
+          # report of dependencies
+          - FOSSA_API_KEY=$FOSSA_KEY fossa report licenses
+          # fossa test: If there are issues, it prnts them on stdout and exits with code 1
+          # add next line in when we are ready to block builds if fossa fails
+          - FOSSA_API_KEY=$FOSSA_KEY fossa test
+
+definitions:
+  services:
+    redis:
+      image: redis
+      memory: 128
