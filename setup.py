@@ -18,7 +18,7 @@ setup(
     ],
     install_requires=[
         'numpy',
-        'opencv-python',
+        'opencv-contrib-python-headless',
         'ffmpeg-python',
         'senseye-pyueye>=0.2.0',
     ],
