@@ -50,7 +50,7 @@ class File(Output):
         '''Determines a good codec to use based on path.suffix.'''
         codec_lookup = {
             '.avi': {'vcodec': 'huffyuv'},
-            '.mp4': {'vcodec': 'libx264', 'crf': 0, 'preset': 'ultrafast'},
+            '.mp4': {'vcodec': 'libx264', 'crf': 17, 'preset': 'ultrafast'},
             '.mkv': {'vcodec': 'h264', 'crf': 23, 'preset': 'ultrafast'},
             '.yuv': {'vcodec': 'rawvideo'}
         }
@@ -107,14 +107,20 @@ class File(Output):
 
     def write(self, data=None):
         if data is not None and self.output:
-            self.output.write(data)
+            try:
+                self.output.write(data)
+            except: pass
 
     def close(self):
         if self.output:
-            self.output.close()
-
             if self.process and self.process.poll() == None:
-                self.process.kill()
+                try:
+                    self.process.communicate(timeout=5)
+                except Exception as e:
+                    log.warning(f'Failed to end process cleanly with error {e}. Killing...')
+                    self.process.kill()
+                    outs, errs = self.process.communicate()
+                    log.error(f'Process kill results: {errs}')
 
             try:
                 # make the stream reusable by creating a new tmp path
