@@ -1,21 +1,21 @@
 [project]
-name = "senseye_cameras"
-version = "1.0.4"
+name = "senseye-cameras"
+version = "1.0.9"
 description = "Senseye Camera Utilities"
 authors = [
-    "Senseye Inc <engineeringadmin@senseye.co>"
+    "Senseye, Inc. <engineeringadmin@senseye.co>"
 ]
-license = "MIT"
+license = "BSD-3-Clause"
 readme = "README.md"
 python = "^3.6"
-repository = "https://github.com/senseyeinc/senseye_cameras"
+repository = "https://github.com/senseye-inc/senseye-cameras"
 documentation = "https://senseye-cameras.readthedocs.io/en/latest/"
 
 [dependencies]
 numpy = "^1.14.5"
-opencv-python = "^4.1.2.30"
-senseye-pyueye = "^0.1.0"
+opencv-python-headless = "^4.4.0.46"
 ffmpeg-python = "^0.2.0"
+senseye-pyueye = "^0.2.0"
 
 [build-system]
 requires = [

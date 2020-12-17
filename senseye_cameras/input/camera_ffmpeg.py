@@ -38,7 +38,7 @@ class CameraFfmpeg(Input):
     def get_format(self):
         '''Get os specific format.'''
         if 'linux' in sys.platform:
-            return 'v412'
+            return 'v4l2'
         if sys.platform == 'darwin':
             return 'avfoundation'
         return 'dshow'
@@ -84,7 +84,7 @@ class CameraFfmpeg(Input):
                 # convert rawvideo frames into a numpy array
                 frame_size = np.prod(np.array(self.config.get('res')))
                 frame_bytes = self.input.read(frame_size)
-                frame_str = np.fromstring(frame_bytes, dtype='uint8')
+                frame_str = np.frombuffer(frame_bytes, dtype='uint8')
                 # add shape metadata to the frame
                 # numpy expects (width, height, channels)
                 numpy_res = self.config.get('res')[1::-1] + self.config.get('res')[2:]
@@ -94,6 +94,7 @@ class CameraFfmpeg(Input):
                 frame = self.input.read(self.config.get('block_size'))
         except Exception as e:
             log.error(f"Ffmpeg camera error: {e}")
+            raise
 
         return frame, time.time()
 

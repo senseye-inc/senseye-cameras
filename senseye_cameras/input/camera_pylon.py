@@ -89,7 +89,10 @@ class CameraPylon(Input):
                 self.read_count+=1
             except TypeError as e:
                 log.error(f"{str(self)} read error: {e}")
-            ret.Release()
+                raise
+            finally:
+                ret.Release()
+
         return frame, now
 
     def close(self):

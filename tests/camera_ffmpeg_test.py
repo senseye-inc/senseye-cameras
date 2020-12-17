@@ -16,14 +16,15 @@ def test_read():
     Thus, only run the test if camera.open() does not fail.
     '''
     cam = None
+    frame = None
     try:
         cam = create_input(type='ffmpeg', id=0)
         cam.open()
+        frame, timestamp = cam.read()
     except Exception as e:
         log.warning(f'Test could not be run, camera open failed with error: {e}. This is most likely a hardware issue.')
         return
 
-    frame, timestamp = cam.read()
     assert frame is not None
 
     cam.close()

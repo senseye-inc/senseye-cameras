@@ -9,10 +9,10 @@ pipelines:
         services:
             - redis
         script: # Modify the commands below to build your repository
-            - pip install nose pytest
-            - pip install . --extra-index-url=http://senseye:Three33@pypi.senseye.co --trusted-host=pypi.senseye.co
+            - export PATH=$PATH:~/.local/bin
+            - pip install .[test] --user
             - pytest
-            - pip freeze > requirements.txt
+            - pip freeze --user > requirements.txt
         artifacts:
             - requirements.txt
 
@@ -21,13 +21,12 @@ pipelines:
         script:
           - curl -H 'Cache-Control:no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash
           # (commit to bitbucket instead of using in pipeline)
-          - fossa init
-          - FOSSA_API_KEY=$FOSSA_KEY fossa analyze
+          - FOSSA_API_KEY=$FOSSA_KEY fossa analyze -c .fossa.yml
           # report of dependencies
-          - FOSSA_API_KEY=$FOSSA_KEY fossa report licenses
+          - FOSSA_API_KEY=$FOSSA_KEY fossa report licenses -c .fossa.yml
           # fossa test: If there are issues, it prnts them on stdout and exits with code 1
           # add next line in when we are ready to block builds if fossa fails
-          - FOSSA_API_KEY=$FOSSA_KEY fossa test
+          - FOSSA_API_KEY=$FOSSA_KEY fossa test -c .fossa.yml
 
 definitions:
   services:

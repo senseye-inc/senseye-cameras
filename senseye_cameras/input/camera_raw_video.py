@@ -43,6 +43,7 @@ class CameraRawVideo(Input):
                 frame = buf.reshape(self.config.get('res'))
         except Exception as e:
             log.error(f'{str(self)} read error: {e}')
+            raise
 
         return frame, time.time()
 

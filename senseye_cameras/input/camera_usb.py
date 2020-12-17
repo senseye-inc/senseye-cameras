@@ -85,6 +85,7 @@ class CameraUsb(Input):
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         except Exception as e:
             log.error(f'{str(self)} read error: {e}')
+            raise
 
         return frame, time.time()
 
